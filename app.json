@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "ReadingHabbit",
+    "slug": "ReadingHabbit",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "ReadingHabbit"
+}
