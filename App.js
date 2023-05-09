@@ -5,6 +5,7 @@ import * as Font from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import Tabs from "./navigation/Tabs";
+import Root from "./navigation/Root";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -38,7 +39,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Tabs />
+      <Root />
       <View onLayout={onLayoutRootView}></View>
     </NavigationContainer>
   );
