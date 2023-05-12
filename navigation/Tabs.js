@@ -5,7 +5,12 @@ import Bookshelf from "../screens/Bookshelf";
 import Notes from "../screens/Notes";
 import My from "../screens/My";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import Stack from "./Stack";
+import {
+  BOOKSHELF_SCREEN,
+  HOME_SCREEN,
+  MY_SCREEN,
+  NOTES_SCREEN,
+} from "../constants/screenName";
 
 const Tab = createBottomTabNavigator();
 
@@ -21,7 +26,7 @@ const Tabs = () => {
       }}
     >
       <Tab.Screen
-        name="Home"
+        name={HOME_SCREEN}
         component={Home}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -30,7 +35,7 @@ const Tabs = () => {
         }}
       />
       <Tab.Screen
-        name="Bookshelf"
+        name={BOOKSHELF_SCREEN}
         component={Bookshelf}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -39,7 +44,7 @@ const Tabs = () => {
         }}
       />
       <Tab.Screen
-        name="Notes"
+        name={NOTES_SCREEN}
         component={Notes}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -52,7 +57,7 @@ const Tabs = () => {
         }}
       />
       <Tab.Screen
-        name="My"
+        name={MY_SCREEN}
         component={My}
         options={{
           tabBarIcon: ({ color, size }) => (

@@ -1,10 +1,14 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from "@react-navigation/native-stack";
 import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   TouchableOpacity,
   ListRenderItem,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { View, Text } from "react-native";
 import styled from "styled-components/native";
@@ -15,6 +19,12 @@ import BookCard from "../components/screens/Bookshelf/BookCard";
 import { Book, ReadingStatus } from "../types/bookTypes";
 import { SectionTitle } from "../components/screens/Bookshelf/SectionTitle";
 import BookCover from "../components/screens/Bookshelf/BookCover";
+import {
+  DETAIL_SCREEN,
+  REGISTER_SCREEN,
+  SEARCH_SCREEN,
+} from "../constants/screenName";
+import { useNavigation } from "@react-navigation/native";
 
 const mockData: Book[] = [
   {
@@ -237,8 +247,21 @@ const Bookshelf: React.FC<NativeStackScreenProps<any, "Bookshelf">> = ({
     return mockData.filter((it) => it.status === ReadingStatus.READ);
   }, []);
 
+  const navigation = useNavigation();
+
+  const goToDetail = (book: Book) => {
+    navigation.navigate("Stack", {
+      screen: DETAIL_SCREEN,
+      params: { ...book },
+    });
+  };
+
   const renderBooks: ListRenderItem<Book> = ({ item }) => (
-    <BookCover image={item.image} />
+    <TouchableWithoutFeedback onPress={() => goToDetail(item)}>
+      <View>
+        <BookCover image={item.image} />
+      </View>
+    </TouchableWithoutFeedback>
   );
   const bookKeyExtractor = (item: Book) => item.isbn;
 
@@ -269,7 +292,7 @@ const Bookshelf: React.FC<NativeStackScreenProps<any, "Bookshelf">> = ({
         <SectionTitle>Wish List</SectionTitle>
         <Row>
           <RegisterBook
-            onPress={() => navigate("Stack", { screen: "Register" })}
+            onPress={() => navigate("Stack", { screen: SEARCH_SCREEN })}
           >
             <AntDesign name="plus" size={24} color={DARK_BLUE} />
           </RegisterBook>

@@ -10,7 +10,7 @@ export interface Book {
   totalPages: number;
   image: string;
   status: ReadingStatus;
-  currentPage: number;
+  currentPage?: number;
   startDate?: string;
   endDate?: string;
   quotes?: Quote[];
@@ -18,6 +18,7 @@ export interface Book {
   discount?: string;
   isFavorite: boolean;
   isWishList: boolean;
+  pageCount?: number;
 }
 
 export enum ReadingStatus {

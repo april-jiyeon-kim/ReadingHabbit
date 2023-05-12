@@ -1,3 +1,4 @@
+import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
 import styled from "styled-components/native";
 
@@ -5,15 +6,11 @@ interface Props {
   image: string;
 }
 
-const BookCover: React.FC<Props> = ({ image }) => (
-  <Wrapper>
-    <CoverImg source={{ uri: image }} />
-  </Wrapper>
-);
+const BookCover: React.FC<Props> = ({ image }) => {
+  return <CoverImg source={{ uri: image }} />;
+};
 
 export default BookCover;
-
-const Wrapper = styled.TouchableOpacity``;
 
 const CoverImg = styled.Image`
   width: 60px;
