@@ -2,11 +2,19 @@ import React from "react";
 import styled from "styled-components/native";
 import { Book } from "../../../types/bookTypes";
 import { LIGHT_GREY } from "../../../styles/colors";
-import { Dimensions, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { Row } from "../../../styles/layout";
 import Tag from "../../common/Tag";
 import ReadingProgress from "./ReadingStatus";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { DETAIL_SCREEN } from "../../../constants/screenName";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -14,37 +22,47 @@ interface BookCardProps {
   book: Book;
 }
 
-const BookCard: React.FC<BookCardProps> = ({ book }) => (
-  <Container>
-    <Wrapper>
-      <BookTitle>
-        {book.title.slice(0, 28)}
-        {book.title.length > 28 ? "..." : null}
-      </BookTitle>
-      <Row>
-        <TouchableOpacity>
-          <CoverImg source={{ uri: book.image }} />
-        </TouchableOpacity>
-        <BookDetail>
-          <Row>
-            {book.genres.map((genre) => (
-              <Tag key={genre} label={genre} />
-            ))}
-          </Row>
-          <ReadingProgress book={book} />
-          <ButtonWrapper>
-            <MaterialCommunityIcons
-              name="note-plus-outline"
-              size={32}
-              color="black"
-            />
-          </ButtonWrapper>
-        </BookDetail>
-      </Row>
-    </Wrapper>
-  </Container>
-);
+const BookCard: React.FC<BookCardProps> = ({ book }) => {
+  const navigation = useNavigation();
+  const goToDetail = () => {
+    //@ts-ignore
+    navigation.navigate("Stack", {
+      screen: DETAIL_SCREEN,
+      params: { ...book },
+    });
+  };
 
+  return (
+    <Container>
+      <Wrapper>
+        <BookTitle>
+          {book.title.slice(0, 28)}
+          {book.title.length > 28 ? "..." : null}
+        </BookTitle>
+        <Row>
+          <TouchableWithoutFeedback onPress={goToDetail}>
+            <CoverImg source={{ uri: book.image }} />
+          </TouchableWithoutFeedback>
+          <BookDetail>
+            <Row>
+              {book.genres.map((genre) => (
+                <Tag key={genre} label={genre} />
+              ))}
+            </Row>
+            <ReadingProgress book={book} />
+            <ButtonWrapper>
+              <MaterialCommunityIcons
+                name="note-plus-outline"
+                size={32}
+                color="black"
+              />
+            </ButtonWrapper>
+          </BookDetail>
+        </Row>
+      </Wrapper>
+    </Container>
+  );
+};
 export default BookCard;
 
 const Container = styled.View`
