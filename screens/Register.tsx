@@ -43,7 +43,6 @@ const Register: React.FC<RegisterScreenProps> = ({
       onSuccess: (data) => {
         const { pageCount } = data?.volumeInfo;
         setBook({ ...book, pageCount });
-        console.log(book);
       },
     }
   );
