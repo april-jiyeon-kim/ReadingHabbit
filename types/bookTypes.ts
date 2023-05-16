@@ -40,3 +40,8 @@ export interface Note {
   content: string;
   pageRange: string;
 }
+
+export enum NoteType {
+  NOTES = "NOTES",
+  QUOTES = "QUOTES",
+}
