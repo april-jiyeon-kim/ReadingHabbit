@@ -4,4 +4,5 @@ export const SEARCH_SCREEN = "Search Books";
 export const BOOKSHELF_SCREEN = "Bookshelf";
 export const MY_SCREEN = "My";
 export const NOTES_SCREEN = "Notes";
+export const WRITE_NOTE_SCREEN = "Write Note";
 export const REGISTER_SCREEN = "Register";

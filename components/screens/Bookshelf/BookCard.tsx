@@ -14,7 +14,10 @@ import Tag from "../../common/Tag";
 import ReadingProgress from "./ReadingStatus";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { DETAIL_SCREEN } from "../../../constants/screenName";
+import {
+  DETAIL_SCREEN,
+  WRITE_NOTE_SCREEN,
+} from "../../../constants/screenName";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -24,11 +27,19 @@ interface BookCardProps {
 
 const BookCard: React.FC<BookCardProps> = ({ book }) => {
   const navigation = useNavigation();
+
   const goToDetail = () => {
     //@ts-ignore
     navigation.navigate("Stack", {
       screen: DETAIL_SCREEN,
       params: { ...book },
+    });
+  };
+
+  const goToWriteNote = () => {
+    //@ts-ignore
+    navigation.navigate("Stack", {
+      screen: WRITE_NOTE_SCREEN,
     });
   };
 
@@ -50,7 +61,7 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
               ))}
             </Row>
             <ReadingProgress book={book} />
-            <ButtonWrapper>
+            <ButtonWrapper onPress={goToWriteNote}>
               <MaterialCommunityIcons
                 name="note-plus-outline"
                 size={32}

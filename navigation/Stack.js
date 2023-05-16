@@ -9,8 +9,10 @@ import {
   DETAIL_SCREEN,
   REGISTER_SCREEN,
   SEARCH_SCREEN,
+  WRITE_NOTE_SCREEN,
 } from "../constants/screenName";
 import { DARK_BLUE } from "../styles/colors";
+import WriteNote from "../screens/WriteNote";
 
 const ScreenRegister = ({ navigation: { navigate } }) => (
   <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Bookshelf" })}>
@@ -27,7 +29,30 @@ const Stack = () => (
     }}
   >
     <NativeStack.Screen name={SEARCH_SCREEN} component={Search} />
-    <NativeStack.Screen name={DETAIL_SCREEN} component={Detail} />
+    <NativeStack.Screen
+      name={WRITE_NOTE_SCREEN}
+      component={WriteNote}
+      options={{
+        headerTitle: "Write Note",
+        headerRight: () => (
+          <TouchableOpacity onPress={() => console.log("Save")}>
+            <Ionicons name="checkmark-sharp" size={24} color={DARK_BLUE} />
+          </TouchableOpacity>
+        ),
+      }}
+    />
+    <NativeStack.Screen
+      name={DETAIL_SCREEN}
+      component={Detail}
+      options={{
+        headerTitle: "",
+        headerRight: () => (
+          <TouchableOpacity onPress={() => console.log("Save")}>
+            <Ionicons name="menu" size={24} color="black" />
+          </TouchableOpacity>
+        ),
+      }}
+    />
     <NativeStack.Screen
       name={REGISTER_SCREEN}
       component={Register}
