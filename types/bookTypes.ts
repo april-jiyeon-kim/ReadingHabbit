@@ -35,10 +35,12 @@ export interface Quote {
 }
 
 export interface Note {
-  id: string;
-  bookId: string;
-  content: string;
-  pageRange: string;
+  id: number;
+  noteType: NoteType;
+  title: string;
+  text: string;
+  page: string[];
+  image: string;
 }
 
 export enum NoteType {

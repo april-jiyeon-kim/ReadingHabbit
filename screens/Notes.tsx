@@ -4,6 +4,7 @@ import ToggleTab from "../components/common/ToggleTab";
 import { NoteType } from "../types/bookTypes";
 import styled from "styled-components/native";
 import { Row } from "../styles/layout";
+import NotesQuotesTab from "../components/screens/Notes/NotesQuotesTab";
 
 const mockData = [
   {
@@ -99,19 +100,7 @@ const Notes = () => {
         ItemSeparatorComponent={Seperator}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 90 }}
-        renderItem={({ item }) => (
-          <NoteContainer key={item.id}>
-            <CoverImg source={{ uri: item.image }} />
-            <RightContainer>
-              <NoteTitle>{item.title}</NoteTitle>
-              <PageText>
-                p.{item.page[0]}
-                {item.page.length > 1 && `- p.${item.page[1]}`}
-              </PageText>
-              <NoteText>{item.text}</NoteText>
-            </RightContainer>
-          </NoteContainer>
-        )}
+        renderItem={({ item }) => <NotesQuotesTab note={item} />}
       />
     </Wrapper>
   );

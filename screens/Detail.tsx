@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { Book, NoteType, ReadingStatus } from "../types/bookTypes";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { HeaderText } from "../styles/text";
@@ -10,6 +10,7 @@ import ReadingProgress from "../components/screens/Bookshelf/ReadingStatus";
 import Status from "../components/common/Status";
 import BottomSheet from "../components/common/BottomSheet";
 import ToggleTab from "../components/common/ToggleTab";
+import NotesQuotesTab from "../components/screens/Notes/NotesQuotesTab";
 
 type RootStackParamList = {
   Detail: Book;
@@ -39,7 +40,7 @@ const mockData = [
   {
     id: 3,
     noteType: NoteType.NOTES,
-    title: "Book Title",
+    title: "Book Title1",
     text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
     page: ["120"],
     image:
@@ -48,7 +49,7 @@ const mockData = [
   {
     id: 4,
     noteType: NoteType.NOTES,
-    title: "Book Title",
+    title: "Book Title2",
     text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
     page: ["120"],
     image:
@@ -57,7 +58,7 @@ const mockData = [
   {
     id: 5,
     noteType: NoteType.NOTES,
-    title: "Book Title",
+    title: "Book Title3",
     text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
     page: ["120"],
     image:
@@ -66,7 +67,7 @@ const mockData = [
   {
     id: 6,
     noteType: NoteType.NOTES,
-    title: "Book Title",
+    title: "Book Title4",
     text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
     page: ["120"],
     image:
@@ -75,7 +76,7 @@ const mockData = [
   {
     id: 7,
     noteType: NoteType.NOTES,
-    title: "Book Title",
+    title: "Book Title5",
     text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
     page: ["120"],
     image:
@@ -84,7 +85,16 @@ const mockData = [
   {
     id: 8,
     noteType: NoteType.NOTES,
-    title: "Book Title",
+    title: "Book Title6",
+    text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
+    page: ["120"],
+    image:
+      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
+  },
+  {
+    id: 9,
+    noteType: NoteType.NOTES,
+    title: "Book Tidtle7",
     text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
     page: ["120"],
     image:
@@ -106,34 +116,48 @@ const Detail: React.FC<DetailScreenProps> = ({
   }, [tab]);
 
   return (
-    <Wrapper>
-      <HeaderText>{book.title}</HeaderText>
-      <BookInfoContainer>
-        <CoverImg source={{ uri: book.image }} />
-        <BookInfo>
-          <View>
-            <BottomText>{book.author}</BottomText>
-            <BottomText>{book.publisher}</BottomText>
-          </View>
-          <BottomSheet openBtn={<Status label={ReadingStatus.READING} />}>
+    <>
+      <BookContainer>
+        <HeaderText>
+          {book.title.slice(0, 28)} {book.title.length > 28 ? "..." : null}
+        </HeaderText>
+        <BookInfoContainer>
+          <CoverImg source={{ uri: book.image }} />
+          <BookInfo>
             <View>
-              <Text>test</Text>
+              <BottomText>{book.author}</BottomText>
+              <BottomText>{book.publisher}</BottomText>
             </View>
-          </BottomSheet>
+            <BottomSheet openBtn={<Status label={ReadingStatus.READING} />}>
+              <View>
+                <Text>test</Text>
+              </View>
+            </BottomSheet>
 
-          <ReadingProgress book={book} />
-        </BookInfo>
-      </BookInfoContainer>
-    </Wrapper>
+            <ReadingProgress book={book} />
+          </BookInfo>
+        </BookInfoContainer>
+      </BookContainer>
+      <NotesContainer>
+        <ToggleTab activeTab={tab} onChangeTab={handleTabChange} />
+        <FlatList
+          data={data}
+          keyExtractor={(item) => item.id.toString()}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <NotesQuotesTab note={item} showBookInfo={false} />
+          )}
+          ItemSeparatorComponent={Seperator}
+        />
+      </NotesContainer>
+    </>
   );
 };
 
 export default Detail;
-const Wrapper = styled.View`
-  margin: 26px 24px;
-`;
+
 const BookInfoContainer = styled(Row)`
-  margin: 24px 0;
+  margin: 24px 0 0;
   width: 100%;
 `;
 const CoverImg = styled.Image`
@@ -155,4 +179,17 @@ const BottomText = styled.Text`
   font-weight: 400;
   font-size: 12px;
   color: #797979;
+`;
+
+const BookContainer = styled.View`
+  margin: 26px 24px 0;
+`;
+
+const NotesContainer = styled.View`
+  margin: 0 26px 0;
+  flex: 1;
+`;
+
+const Seperator = styled.View`
+  height: 10px;
 `;
