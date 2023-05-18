@@ -1,25 +1,61 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput } from "react-native";
-import { LIGHT_GREY } from "../styles/colors";
+import { DARK_BLUE, LIGHT_GREY } from "../styles/colors";
 import styled from "styled-components/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { Ionicons } from "@expo/vector-icons";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Book } from "../types/bookTypes";
 
-const WriteNote = () => (
-  <Wrapper>
-    <ButtonContainer>
-      <PageBtn>
-        <PageText>P. 120</PageText>
-      </PageBtn>
-    </ButtonContainer>
+type RootStackParamList = {
+  WriteNote: { book: Book };
+};
 
-    <TextArea
-      placeholder="Share your thoughts here..."
-      placeholderTextColor={LIGHT_GREY}
-      multiline
-      textAlignVertical="top"
-    />
-  </Wrapper>
-);
+type WriteNoteScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  "WriteNote"
+>;
+
+const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
+  const { book } = route.params;
+  const [note, setNote] = useState("");
+  const onChangeText = (text: string) => setNote(text);
+  const handleSaveNote = () => {
+    console.log(note);
+
+    // navigation.goBack();
+  };
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: book.title,
+      headerTitleStyle: { fontSize: 14 },
+      headerRight: () => (
+        <TouchableOpacity onPress={handleSaveNote}>
+          <Ionicons name="checkmark-sharp" size={24} color={DARK_BLUE} />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
+
+  return (
+    <Wrapper>
+      <ButtonContainer>
+        <PageBtn>
+          <PageText>P. 120</PageText>
+        </PageBtn>
+      </ButtonContainer>
+
+      <TextArea
+        placeholder="Share your thoughts here..."
+        placeholderTextColor={LIGHT_GREY}
+        multiline
+        textAlignVertical="top"
+        value={note}
+        onChangeText={onChangeText}
+      />
+    </Wrapper>
+  );
+};
 export default WriteNote;
 
 const Wrapper = styled.View`

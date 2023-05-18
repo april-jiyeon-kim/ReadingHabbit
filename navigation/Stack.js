@@ -29,18 +29,7 @@ const Stack = () => (
     }}
   >
     <NativeStack.Screen name={SEARCH_SCREEN} component={Search} />
-    <NativeStack.Screen
-      name={WRITE_NOTE_SCREEN}
-      component={WriteNote}
-      options={{
-        headerTitle: "Write Note",
-        headerRight: () => (
-          <TouchableOpacity onPress={() => console.log("Save")}>
-            <Ionicons name="checkmark-sharp" size={24} color={DARK_BLUE} />
-          </TouchableOpacity>
-        ),
-      }}
-    />
+    <NativeStack.Screen name={WRITE_NOTE_SCREEN} component={WriteNote} />
     <NativeStack.Screen
       name={DETAIL_SCREEN}
       component={Detail}
