@@ -40,6 +40,7 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
     //@ts-ignore
     navigation.navigate("Stack", {
       screen: WRITE_NOTE_SCREEN,
+      params: { book },
     });
   };
 

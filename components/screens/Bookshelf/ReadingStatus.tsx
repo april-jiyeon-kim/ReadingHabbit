@@ -44,13 +44,17 @@ const ReadingProgress: React.FC<Props> = ({ book }) => (
   <View>
     <DateWrapper>
       <DateText>Started date</DateText>
-      <Date>{book.startDate}</Date>
+      <Date>{book.reading.startDate}</Date>
     </DateWrapper>
     <ProgressLabel>
-      <PercentageText>{`${
-        (book.currentPage / book.totalPages) * 100
-      }%`}</PercentageText>
-      <PagesText>{`${book.currentPage}/${book.totalPages}`}</PagesText>
+      {book.reading.currentPage && book.totalPages && (
+        <>
+          <PercentageText>{`${
+            (book.reading.currentPage / book.totalPages) * 100
+          }%`}</PercentageText>
+          <PagesText>{`${book.reading.currentPage}/${book.totalPages}`}</PagesText>
+        </>
+      )}
     </ProgressLabel>
   </View>
 );

@@ -3,16 +3,18 @@ export interface Book {
   title: string;
   author: string;
   publisher: string;
-  pubdate: string;
+  pubDate: string;
   link: string;
   description: string;
   genres: string[];
-  totalPages: number;
+  totalPages?: number;
   image: string;
-  status: ReadingStatus;
-  currentPage?: number;
-  startDate?: string;
-  endDate?: string;
+  reading: {
+    status: ReadingStatus;
+    currentPage?: number;
+    startDate?: string;
+    endDate?: string;
+  };
   quotes?: Quote[];
   notes?: Note[];
   discount?: string;
