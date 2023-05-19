@@ -3,12 +3,17 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Tabs from "./Tabs";
 import Stack from "./Stack";
 
-const Nav = createNativeStackNavigator();
+type RootStackParamList = {
+  Tabs: undefined;
+  Stack: undefined;
+};
 
-const Root = () => (
+const Nav = createNativeStackNavigator<RootStackParamList>();
+
+const MainNavigator: React.FC = () => (
   <Nav.Navigator screenOptions={{ presentation: "modal", headerShown: false }}>
     <Nav.Screen name="Tabs" component={Tabs} />
     <Nav.Screen name="Stack" component={Stack} />
   </Nav.Navigator>
 );
-export default Root;
+export default MainNavigator;
