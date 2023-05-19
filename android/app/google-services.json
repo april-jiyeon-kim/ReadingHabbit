@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "159812615577",
+    "project_id": "readinghabbit-6faa9",
+    "storage_bucket": "readinghabbit-6faa9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:159812615577:android:88af64e5932b4c300ee708",
+        "android_client_info": {
+          "package_name": "com.readinghabbit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "159812615577-9icikbqkp905cfujjlkv0moha1hsn79s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.readinghabbit",
+            "certificate_hash": "9b2ed8f4152bcbaf8d8d7d0382381eb15b17b1f2"
+          }
+        },
+        {
+          "client_id": "159812615577-i5g5tamm6q8p4q0aurhnt5d78pa47ii0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNesHdtHB_1FBNKp1ubTG5_Nji0ZPlHNY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "159812615577-i5g5tamm6q8p4q0aurhnt5d78pa47ii0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
