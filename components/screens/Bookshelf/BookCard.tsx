@@ -110,9 +110,13 @@ const CoverImg = styled.Image`
 const BookDetail = styled.View`
   width: 65%;
   margin-left: 17px;
+  position: relative;
 `;
 
 const ButtonWrapper = styled.TouchableOpacity`
   align-items: flex-end;
   margin-top: 8px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 `;
