@@ -23,6 +23,7 @@ const Tabs = () => {
         tabBarActiveTintColor: "white",
         tabBarActiveBackgroundColor: "#1E90FF",
         tabBarInactiveTintColor: "#141B34",
+        tabBarShowLabel: false,
       }}
     >
       <Tab.Screen
