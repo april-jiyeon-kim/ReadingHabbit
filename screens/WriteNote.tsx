@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { View, Text, TextInput } from "react-native";
 import { DARK_BLUE, LIGHT_GREY } from "../styles/colors";
 import styled from "styled-components/native";
@@ -6,6 +6,13 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Book } from "../types/bookTypes";
+import BottomSheet, {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+  BottomSheetBackdrop,
+  BottomSheetTextInput,
+} from "@gorhom/bottom-sheet";
+import SetPage from "../components/screens/WriteNote/SetPage";
 
 type RootStackParamList = {
   WriteNote: { book: Book };
@@ -19,11 +26,34 @@ type WriteNoteScreenProps = NativeStackScreenProps<
 const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
   const { book } = route.params;
   const [note, setNote] = useState("");
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => ["25%", "30%", "45%"], []);
+
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
+
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        pressBehavior="close"
+        disappearsOnIndex={1}
+        appearsOnIndex={2}
+      />
+    ),
+    []
+  );
+
   const onChangeText = (text: string) => setNote(text);
   const handleSaveNote = () => {
     console.log(note);
+    navigation.goBack();
+  };
 
-    // navigation.goBack();
+  const handlePresentModalPress = () => {
+    console.log("expand");
+    bottomSheetRef.current?.expand();
   };
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -38,22 +68,32 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
   }, [navigation]);
 
   return (
-    <Wrapper>
-      <ButtonContainer>
-        <PageBtn>
-          <PageText>P. 120</PageText>
-        </PageBtn>
-      </ButtonContainer>
-
-      <TextArea
-        placeholder="Share your thoughts here..."
-        placeholderTextColor={LIGHT_GREY}
-        multiline
-        textAlignVertical="top"
-        value={note}
-        onChangeText={onChangeText}
-      />
-    </Wrapper>
+    <BottomSheetModalProvider>
+      <Wrapper>
+        <ButtonContainer>
+          <PageBtn onPress={handlePresentModalPress}>
+            <PageText>P. 120</PageText>
+          </PageBtn>
+        </ButtonContainer>
+        <TextArea
+          placeholder="Share your thoughts here..."
+          placeholderTextColor={LIGHT_GREY}
+          multiline
+          textAlignVertical="top"
+          value={note}
+          onChangeText={onChangeText}
+        />
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={-1}
+          snapPoints={snapPoints}
+          backdropComponent={renderBackdrop}
+          onChange={handleSheetChanges}
+        >
+          <SetPage />
+        </BottomSheet>
+      </Wrapper>
+    </BottomSheetModalProvider>
   );
 };
 export default WriteNote;

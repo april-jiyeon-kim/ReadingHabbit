@@ -80,7 +80,7 @@ const Register: React.FC<RegisterScreenProps> = ({
               <InputWithLabel label={"Title"} value={item.title} />
               <InputWithLabel label={"Author"} value={item.author} />
               <InputWithLabel label={"Publisher"} value={item.publisher} />
-              <InputWithLabel label={"Published"} value={item.pubdate} />
+              <InputWithLabel label={"Published"} value={item.pubDate} />
               {isLoading ? <Loader /> : null}
               {item?.pageCount && (
                 <InputWithLabel

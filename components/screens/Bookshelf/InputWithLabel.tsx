@@ -6,20 +6,27 @@ import React from "react";
 interface Props {
   label: string;
   value: string;
+  size?: "small" | "medium" | "large";
+  editable?: boolean;
 }
 
-const InputWithLabel: React.FC<Props> = ({ label, value }) => {
+const InputWithLabel: React.FC<Props> = ({
+  label,
+  value,
+  size = "medium",
+  editable = false,
+}) => {
   return (
-    <Wrapper>
+    <Wrapper size={size}>
       <Label>{label}</Label>
-      <InputText value={value} editable={false} />
+      <InputText value={value} editable={editable} />
     </Wrapper>
   );
 };
 
-const Wrapper = styled.View`
+const Wrapper = styled.View<{ size: string }>`
   margin: 10px 0;
-  width: 100%;
+  width: ${({ size }) => (size === "small" ? "45%" : "100%")};
 `;
 
 const Label = styled.Text`

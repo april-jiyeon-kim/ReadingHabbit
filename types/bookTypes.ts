@@ -49,3 +49,8 @@ export enum NoteType {
   NOTES = "NOTES",
   QUOTES = "QUOTES",
 }
+
+export enum PageType {
+  SINGLE = "Single",
+  RANGE = "Range",
+}
