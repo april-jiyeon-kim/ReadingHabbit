@@ -17,12 +17,15 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import SetStatus from "../components/screens/Detail/SetStatus";
 import { translateReadingStatus } from "../utils";
+import SetPage from "../components/screens/WriteNote/SetPage";
+import SetCurrentPage from "../components/screens/Detail/SetCurrentPage";
 
 type RootStackParamList = {
   Detail: Book;
 };
 
 type DetailScreenProps = NativeStackScreenProps<RootStackParamList, "Detail">;
+type BottomSheetType = "Status" | "Page" | "Action";
 
 const mockData = [
   {
@@ -114,6 +117,10 @@ const Detail: React.FC<DetailScreenProps> = ({
 }) => {
   const [tab, setTab] = useState(NoteType.QUOTES);
   const [readingStatus, setReadingStatus] = useState(ReadingStatus.READING);
+  const [currentPage, setCurrentPage] = useState(book.reading.currentPage || 0);
+  const [selectedBottomSheet, setSelectedBottomSheet] =
+    useState<BottomSheetType>("Status");
+
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["10%", "20%", "32%"], []);
   const handleTabChange = (newTab: NoteType) => {
@@ -124,7 +131,8 @@ const Detail: React.FC<DetailScreenProps> = ({
     return mockData.filter((it) => it.noteType === tab);
   }, [tab]);
 
-  const handlePresentModalPress = () => {
+  const handlePresentModalPress = (selected: BottomSheetType) => {
+    setSelectedBottomSheet(selected);
     bottomSheetRef.current?.expand();
   };
 
@@ -135,6 +143,14 @@ const Detail: React.FC<DetailScreenProps> = ({
   const handleStatusChange = (status: ReadingStatus) => {
     handleHideModalPress();
     setReadingStatus(status);
+  };
+
+  const handleCurrentPageChange = (page: number) => {
+    handleHideModalPress();
+    console.log(page);
+    console.log(book.reading);
+    console.log(book.totalPages);
+    setCurrentPage(page);
   };
 
   const renderBackdrop = useCallback(
@@ -162,11 +178,15 @@ const Detail: React.FC<DetailScreenProps> = ({
               <BottomText>{book.author}</BottomText>
               <BottomText>{book.publisher}</BottomText>
             </View>
-            <StatusBtn onPress={handlePresentModalPress}>
+            <StatusBtn onPress={() => handlePresentModalPress("Status")}>
               <Status label={translateReadingStatus(readingStatus)} />
             </StatusBtn>
 
-            <ReadingProgress book={book} />
+            <TouchableOpacity onPress={() => handlePresentModalPress("Page")}>
+              <ProgressWrapper>
+                <ReadingProgress book={book} />
+              </ProgressWrapper>
+            </TouchableOpacity>
           </BookInfo>
         </BookInfoContainer>
       </BookContainer>
@@ -188,14 +208,24 @@ const Detail: React.FC<DetailScreenProps> = ({
         snapPoints={snapPoints}
         backdropComponent={renderBackdrop}
       >
-        <SetStatus onSave={handleStatusChange} />
+        {selectedBottomSheet === "Status" && (
+          <SetStatus onSave={handleStatusChange} />
+        )}
+        {selectedBottomSheet === "Page" && (
+          <SetCurrentPage
+            currentPage={currentPage}
+            onSave={handleCurrentPageChange}
+          />
+        )}
       </BottomSheet>
     </BottomSheetModalProvider>
   );
 };
 
 export default Detail;
-
+const ProgressWrapper = styled.View`
+  height: 100%;
+`;
 const BookInfoContainer = styled(Row)`
   margin: 24px 0 0;
   width: 100%;
@@ -211,6 +241,7 @@ const BookInfo = styled.View`
   margin-left: 10px;
   justify-content: space-between;
   height: 136px;
+  flex: 1;
 `;
 
 const BottomText = styled.Text`
@@ -234,4 +265,6 @@ const Seperator = styled.View`
   height: 10px;
 `;
 
-const StatusBtn = styled.TouchableOpacity``;
+const StatusBtn = styled.TouchableOpacity`
+  width: 135px;
+`;

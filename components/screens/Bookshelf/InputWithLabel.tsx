@@ -8,6 +8,8 @@ interface Props {
   value: string;
   size?: "small" | "medium" | "large";
   editable?: boolean;
+  onChangeText?: (text: string) => void;
+  inputType?: "text" | "number";
 }
 
 const InputWithLabel: React.FC<Props> = ({
@@ -15,11 +17,20 @@ const InputWithLabel: React.FC<Props> = ({
   value,
   size = "medium",
   editable = false,
+  onChangeText,
+  inputType = "text",
+  ...props
 }) => {
   return (
     <Wrapper size={size}>
       <Label>{label}</Label>
-      <InputText value={value} editable={editable} />
+      <InputText
+        value={value}
+        editable={editable}
+        onChangeText={onChangeText}
+        keyboardType={inputType === "number" ? "numeric" : "default"}
+        {...props}
+      />
     </Wrapper>
   );
 };

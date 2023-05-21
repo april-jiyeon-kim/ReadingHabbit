@@ -8,6 +8,31 @@ interface Props {
   book: Book;
 }
 
+const ReadingProgress: React.FC<Props> = ({ book }) => {
+  const pages = `${book.reading.currentPage}/${book.totalPages}`;
+  const percentage =
+    (book.reading.currentPage &&
+      book.totalPages &&
+      (book.reading.currentPage / book.totalPages) * 100) ||
+    0;
+  return (
+    <Wrapper>
+      <DateWrapper>
+        <DateText>Started date</DateText>
+        <Date>{book.reading.startDate}</Date>
+      </DateWrapper>
+      <ProgressBar
+        value={percentage}
+        maxValue={100}
+        size="small"
+        label={pages}
+      />
+    </Wrapper>
+  );
+};
+
+export default ReadingProgress;
+
 const DateWrapper = styled.View`
   flex-direction: row;
   margin: 5px 0 8px;
@@ -41,27 +66,6 @@ const PagesText = styled.Text`
   color: #797979;
 `;
 
-const ReadingProgress: React.FC<Props> = ({ book }) => {
-  const pages = `${book.reading.currentPage}/${book.totalPages}`;
-  const percentage =
-    (book.reading.currentPage &&
-      book.totalPages &&
-      (book.reading.currentPage / book.totalPages) * 100) ||
-    0;
-  return (
-    <View>
-      <DateWrapper>
-        <DateText>Started date</DateText>
-        <Date>{book.reading.startDate}</Date>
-      </DateWrapper>
-      <ProgressBar
-        value={percentage}
-        maxValue={100}
-        size="small"
-        label={pages}
-      />
-    </View>
-  );
-};
-
-export default ReadingProgress;
+const Wrapper = styled.View`
+  position: relative;
+`;
