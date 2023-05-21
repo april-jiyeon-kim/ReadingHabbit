@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import { Book, NoteType, ReadingStatus } from "../types/bookTypes";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -8,9 +8,15 @@ import styled from "styled-components/native";
 import RadioButton from "../components/common/RadioButton";
 import ReadingProgress from "../components/screens/Bookshelf/ReadingStatus";
 import Status from "../components/common/Status";
-import BottomSheet from "../components/common/BottomSheet";
 import ToggleTab from "../components/common/ToggleTab";
 import NotesQuotesTab from "../components/screens/Notes/NotesQuotesTab";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import BottomSheet, {
+  BottomSheetModalProvider,
+  BottomSheetBackdrop,
+} from "@gorhom/bottom-sheet";
+import SetStatus from "../components/screens/Detail/SetStatus";
+import { translateReadingStatus } from "../utils";
 
 type RootStackParamList = {
   Detail: Book;
@@ -107,6 +113,9 @@ const Detail: React.FC<DetailScreenProps> = ({
   route: { params: book },
 }) => {
   const [tab, setTab] = useState(NoteType.QUOTES);
+  const [readingStatus, setReadingStatus] = useState(ReadingStatus.READING);
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => ["10%", "20%", "32%"], []);
   const handleTabChange = (newTab: NoteType) => {
     setTab(newTab);
   };
@@ -115,8 +124,33 @@ const Detail: React.FC<DetailScreenProps> = ({
     return mockData.filter((it) => it.noteType === tab);
   }, [tab]);
 
+  const handlePresentModalPress = () => {
+    bottomSheetRef.current?.expand();
+  };
+
+  const handleHideModalPress = () => {
+    bottomSheetRef.current?.close();
+  };
+
+  const handleStatusChange = (status: ReadingStatus) => {
+    handleHideModalPress();
+    setReadingStatus(status);
+  };
+
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        pressBehavior="close"
+        disappearsOnIndex={1}
+        appearsOnIndex={2}
+      />
+    ),
+    []
+  );
+
   return (
-    <>
+    <BottomSheetModalProvider>
       <BookContainer>
         <HeaderText>
           {book.title.slice(0, 28)} {book.title.length > 28 ? "..." : null}
@@ -128,11 +162,9 @@ const Detail: React.FC<DetailScreenProps> = ({
               <BottomText>{book.author}</BottomText>
               <BottomText>{book.publisher}</BottomText>
             </View>
-            <BottomSheet openBtn={<Status label={ReadingStatus.READING} />}>
-              <View>
-                <Text>test</Text>
-              </View>
-            </BottomSheet>
+            <StatusBtn onPress={handlePresentModalPress}>
+              <Status label={translateReadingStatus(readingStatus)} />
+            </StatusBtn>
 
             <ReadingProgress book={book} />
           </BookInfo>
@@ -150,7 +182,15 @@ const Detail: React.FC<DetailScreenProps> = ({
           ItemSeparatorComponent={Seperator}
         />
       </NotesContainer>
-    </>
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        backdropComponent={renderBackdrop}
+      >
+        <SetStatus onSave={handleStatusChange} />
+      </BottomSheet>
+    </BottomSheetModalProvider>
   );
 };
 
@@ -193,3 +233,5 @@ const NotesContainer = styled.View`
 const Seperator = styled.View`
   height: 10px;
 `;
+
+const StatusBtn = styled.TouchableOpacity``;
