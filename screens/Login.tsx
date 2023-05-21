@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { View, Text, TextInput } from "react-native";
 import styled from "styled-components/native";
 import { DARK_BLUE } from "../styles/colors";
-
+import auth from "@react-native-firebase/auth";
 interface LoginProps {
   navigation: {
     navigate: (screen: string) => void;
@@ -16,6 +16,14 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
   const onSubmitEditing = () => {
     passwordInput.current?.focus();
   };
+  const onLogin = async () => {
+    try {
+      await auth().signInWithEmailAndPassword(email, password);
+    } catch (e: any) {
+      console.log(e);
+    }
+  };
+
   return (
     <Container>
       <InputWrapper>
@@ -40,7 +48,7 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
           placeholderTextColor={"#BDBDBD"}
         />
       </InputWrapper>
-      <Btn>
+      <Btn onPress={onLogin}>
         <BtnText>Log In</BtnText>
       </Btn>
       <JoinBtn onPress={() => navigation.navigate("Join")}>
