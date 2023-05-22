@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Book } from "../../../types/bookTypes";
 import { Text, View } from "react-native";
 import styled from "styled-components/native";
@@ -9,11 +9,10 @@ interface Props {
 }
 
 const ReadingProgress: React.FC<Props> = ({ book }) => {
-  const pages = `${book.reading.currentPage}/${book.totalPages}`;
+  const currentPage = book.reading.currentPage || 0;
+  const pages = `${currentPage}/${book.pageCount}`;
   const percentage =
-    (book.reading.currentPage &&
-      book.totalPages &&
-      (book.reading.currentPage / book.totalPages) * 100) ||
+    (currentPage && book.pageCount && (currentPage / book.pageCount) * 100) ||
     0;
   return (
     <Wrapper>

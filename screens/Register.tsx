@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Text, View, Linking, TextInput, FlatList } from "react-native";
 import { Book, ReadingStatus } from "../types/bookTypes";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -13,6 +13,12 @@ import Status from "../components/common/Status";
 import { translateReadingStatus } from "../utils";
 import RadioButton from "../components/common/RadioButton";
 import { SectionTitle } from "../components/screens/Bookshelf/SectionTitle";
+import { Ionicons } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { DARK_BLUE } from "../styles/colors";
+import firestore from "@react-native-firebase/firestore";
+import { firebase } from "@react-native-firebase/auth";
+import { HOME_SCREEN } from "../constants/screenName";
 
 type RootStackParamList = {
   Register: Book;
@@ -24,11 +30,14 @@ type RegisterScreenProps = NativeStackScreenProps<
 >;
 
 const Register: React.FC<RegisterScreenProps> = ({
-  navigation: { setOptions },
+  navigation,
   route: { params },
 }) => {
+  const user = firebase.auth().currentUser;
   const [book, setBook] = useState(params);
-  const [readingStatus, setReadingStatus] = useState(ReadingStatus.READING);
+  const [readingStatus, setReadingStatus] = useState<ReadingStatus>(
+    ReadingStatus.READING
+  );
   // Find the book on google api
   const { data: volumeData } = useQuery(
     ["search", params.isbn],
@@ -53,9 +62,41 @@ const Register: React.FC<RegisterScreenProps> = ({
 
   const bookKeyExtractor = (item: Book) => item.isbn;
 
-  const handleStatusChange = (status: ReadingStatus) => {
+  const handleStatusChange = useCallback((status: ReadingStatus) => {
     setReadingStatus(status);
-  };
+  }, []);
+
+  const registerBook = useCallback(async () => {
+    if (!user) return;
+    try {
+      const bookData: Book = {
+        ...book,
+        uid: user.uid,
+        reading: { status: readingStatus },
+        isFavorite: false,
+        isWishList: false,
+        genres: [],
+      };
+      const booksCollection = firestore().collection("books");
+      await booksCollection.add(bookData).then(() => {
+        console.log("Book added!");
+      });
+    } catch (error) {
+      console.error("Error registering book:", error);
+    }
+  }, [readingStatus]);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitleStyle: { fontSize: 14 },
+      headerTitle: "",
+      headerRight: () => (
+        <TouchableOpacity onPress={registerBook}>
+          <Ionicons name="checkmark-sharp" size={24} color={DARK_BLUE} />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, readingStatus]);
 
   return (
     <Wrapper>
@@ -71,6 +112,7 @@ const Register: React.FC<RegisterScreenProps> = ({
               <StatusWrapper>
                 {Object.values(ReadingStatus).map((status) => (
                   <RadioButton
+                    key={status}
                     label={translateReadingStatus(status)}
                     selected={readingStatus === status}
                     onPress={() => handleStatusChange(status)}
@@ -80,7 +122,7 @@ const Register: React.FC<RegisterScreenProps> = ({
               <InputWithLabel label={"Title"} value={item.title} />
               <InputWithLabel label={"Author"} value={item.author} />
               <InputWithLabel label={"Publisher"} value={item.publisher} />
-              <InputWithLabel label={"Published"} value={item.pubDate} />
+              <InputWithLabel label={"Published"} value={item.pubdate} />
               {isLoading ? <Loader /> : null}
               {item?.pageCount && (
                 <InputWithLabel

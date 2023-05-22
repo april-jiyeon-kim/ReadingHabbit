@@ -1,13 +1,13 @@
 export interface Book {
+  id: string;
   isbn: string;
   title: string;
   author: string;
   publisher: string;
-  pubDate: string;
+  pubdate: string;
   link: string;
   description: string;
   genres: string[];
-  totalPages?: number;
   image: string;
   reading: {
     status: ReadingStatus;
@@ -21,6 +21,7 @@ export interface Book {
   isFavorite: boolean;
   isWishList: boolean;
   pageCount?: number;
+  uid: string;
 }
 
 export enum ReadingStatus {
@@ -41,7 +42,7 @@ export interface Note {
   noteType: NoteType;
   title: string;
   text: string;
-  page: string[];
+  page: string[]; //single page or page range
   image: string;
 }
 
