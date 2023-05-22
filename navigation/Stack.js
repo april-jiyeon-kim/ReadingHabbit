@@ -30,18 +30,7 @@ const Stack = () => (
   >
     <NativeStack.Screen name={SEARCH_SCREEN} component={Search} />
     <NativeStack.Screen name={WRITE_NOTE_SCREEN} component={WriteNote} />
-    <NativeStack.Screen
-      name={DETAIL_SCREEN}
-      component={Detail}
-      options={{
-        headerTitle: "",
-        headerRight: () => (
-          <TouchableOpacity onPress={() => console.log("Save")}>
-            <Ionicons name="menu" size={24} color="black" />
-          </TouchableOpacity>
-        ),
-      }}
-    />
+    <NativeStack.Screen name={DETAIL_SCREEN} component={Detail} />
     <NativeStack.Screen
       name={REGISTER_SCREEN}
       component={Register}

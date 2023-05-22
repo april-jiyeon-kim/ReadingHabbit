@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, Text, View, Alert } from "react-native";
 import { Book, NoteType, ReadingStatus } from "../types/bookTypes";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { HeaderText } from "../styles/text";
@@ -15,10 +15,12 @@ import BottomSheet, {
   BottomSheetModalProvider,
   BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
+import { Ionicons } from "@expo/vector-icons";
 import SetStatus from "../components/screens/Detail/SetStatus";
 import { translateReadingStatus } from "../utils";
 import SetPage from "../components/screens/WriteNote/SetPage";
 import SetCurrentPage from "../components/screens/Detail/SetCurrentPage";
+import firestore from "@react-native-firebase/firestore";
 
 type RootStackParamList = {
   Detail: Book;
@@ -112,11 +114,11 @@ const mockData = [
 ];
 
 const Detail: React.FC<DetailScreenProps> = ({
-  navigation: { setOptions },
+  navigation,
   route: { params: book },
 }) => {
   const [tab, setTab] = useState(NoteType.QUOTES);
-  const [readingStatus, setReadingStatus] = useState(ReadingStatus.READING);
+  const [readingStatus, setReadingStatus] = useState(book.reading.status);
   const [currentPage, setCurrentPage] = useState(book.reading.currentPage || 0);
   const [selectedBottomSheet, setSelectedBottomSheet] =
     useState<BottomSheetType>("Status");
@@ -147,9 +149,6 @@ const Detail: React.FC<DetailScreenProps> = ({
 
   const handleCurrentPageChange = (page: number) => {
     handleHideModalPress();
-    console.log(page);
-    console.log(book.reading);
-    console.log(book.totalPages);
     setCurrentPage(page);
   };
 
@@ -164,6 +163,39 @@ const Detail: React.FC<DetailScreenProps> = ({
     ),
     []
   );
+
+  const onDelete = () => {
+    Alert.alert("Delete", "Are you sure you want to delete this book?", [
+      { text: "Cancel", onPress: () => {} },
+      { text: "Delete", onPress: handleDelete },
+    ]);
+  };
+  const handleDelete = async () => {
+    try {
+      const booksCollection = firestore().collection("books");
+      await booksCollection
+        .doc(`${book.id}`)
+        .delete()
+        .then(() => {
+          console.log("Book deleted!");
+        });
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error delete book:", error);
+    }
+  };
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitleStyle: { fontSize: 14 },
+      headerTitle: "",
+      headerRight: () => (
+        <TouchableOpacity onPress={onDelete}>
+          <Ionicons name="trash-outline" size={24} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, readingStatus]);
 
   return (
     <BottomSheetModalProvider>
