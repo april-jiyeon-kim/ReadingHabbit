@@ -59,7 +59,6 @@ const Bookshelf: React.FC<NativeStackScreenProps<any, "Bookshelf">> = ({
           })) as Book[];
 
           setBooks(booksArray);
-          console.log(booksArray);
           setLoading(false);
         });
 

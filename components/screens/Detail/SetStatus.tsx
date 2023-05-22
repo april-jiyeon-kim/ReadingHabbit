@@ -14,11 +14,12 @@ import RadioButton from "../../common/RadioButton";
 import { translateReadingStatus } from "../../../utils";
 
 interface Props {
+  status: ReadingStatus;
   onSave: (status: ReadingStatus) => void;
 }
 
-const SetStatus: React.FC<Props> = ({ onSave }) => {
-  const [readingStatus, setReadingStatus] = useState(ReadingStatus.READING);
+const SetStatus: React.FC<Props> = ({ status, onSave }) => {
+  const [readingStatus, setReadingStatus] = useState(status);
 
   const handleStatusChange = (status: ReadingStatus) => {
     setReadingStatus(status);

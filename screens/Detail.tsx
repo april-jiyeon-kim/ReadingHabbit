@@ -144,7 +144,7 @@ const Detail: React.FC<DetailScreenProps> = ({
 
   const handleStatusChange = (status: ReadingStatus) => {
     handleHideModalPress();
-    setReadingStatus(status);
+    updateStatus(status);
   };
 
   const handleCurrentPageChange = (page: number) => {
@@ -170,11 +170,12 @@ const Detail: React.FC<DetailScreenProps> = ({
       { text: "Delete", onPress: handleDelete },
     ]);
   };
+
   const handleDelete = async () => {
     try {
       const booksCollection = firestore().collection("books");
       await booksCollection
-        .doc(`${book.id}`)
+        .doc(book.id)
         .delete()
         .then(() => {
           console.log("Book deleted!");
@@ -182,6 +183,23 @@ const Detail: React.FC<DetailScreenProps> = ({
       navigation.goBack();
     } catch (error) {
       console.error("Error delete book:", error);
+    }
+  };
+
+  const updateStatus = async (status: ReadingStatus) => {
+    try {
+      const bookCollection = firestore().collection("books");
+      await bookCollection
+        .doc(book.id)
+        .update({
+          "reading.status": status,
+        })
+        .then(() => {
+          setReadingStatus(status);
+          console.log("Status updated!");
+        });
+    } catch (error) {
+      console.error("Error updating status:", error);
     }
   };
 
@@ -241,7 +259,7 @@ const Detail: React.FC<DetailScreenProps> = ({
         backdropComponent={renderBackdrop}
       >
         {selectedBottomSheet === "Status" && (
-          <SetStatus onSave={handleStatusChange} />
+          <SetStatus status={readingStatus} onSave={handleStatusChange} />
         )}
         {selectedBottomSheet === "Page" && (
           <SetCurrentPage
