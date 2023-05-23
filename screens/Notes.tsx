@@ -1,101 +1,44 @@
 import React, { useMemo, useState } from "react";
 import { View, Text, FlatList } from "react-native";
 import ToggleTab from "../components/common/ToggleTab";
-import { NoteType } from "../types/bookTypes";
+import { Note, NoteType } from "../types/bookTypes";
 import styled from "styled-components/native";
 import { Row } from "../styles/layout";
 import NotesQuotesTab from "../components/screens/Notes/NotesQuotesTab";
-
-const mockData = [
-  {
-    id: 1,
-    noteType: NoteType.QUOTES,
-    title: "Book Title",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-  {
-    id: 2,
-    noteType: NoteType.QUOTES,
-    title: "Book Title",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120", "130"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-  {
-    id: 3,
-    noteType: NoteType.NOTES,
-    title: "Book Title",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-  {
-    id: 4,
-    noteType: NoteType.NOTES,
-    title: "Book Title",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-  {
-    id: 5,
-    noteType: NoteType.NOTES,
-    title: "Book Title",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-  {
-    id: 6,
-    noteType: NoteType.NOTES,
-    title: "Book Title",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-  {
-    id: 7,
-    noteType: NoteType.NOTES,
-    title: "Book Title",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-  {
-    id: 8,
-    noteType: NoteType.NOTES,
-    title: "Book Title",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-];
+import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Notes = () => {
   const [tab, setTab] = useState(NoteType.QUOTES);
+  const [notes, setNotes] = useState<Note[]>([]);
   const handleTabChange = (newTab: NoteType) => {
     setTab(newTab);
   };
 
-  const data = useMemo(() => {
-    return mockData.filter((it) => it.noteType === tab);
-  }, [tab]);
+  useFocusEffect(
+    React.useCallback(() => {
+      const unsubscribe = firestore()
+        .collection("notes")
+        .where("uid", "==", auth().currentUser?.uid)
+        .where("noteType", "==", tab)
+        .onSnapshot((snapshot) => {
+          const notesArray = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as Note[];
+          setNotes(notesArray);
+        });
+      console.log("load");
+      return () => unsubscribe();
+    }, [tab])
+  );
 
   return (
     <Wrapper>
       <ToggleTab activeTab={tab} onChangeTab={handleTabChange} />
       <FlatList
-        data={data}
+        data={notes}
         keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={Seperator}
         showsVerticalScrollIndicator={false}

@@ -38,11 +38,13 @@ export interface Quote {
 }
 
 export interface Note {
-  id: number;
+  id: string;
+  bookId: string;
+  uid: string;
   noteType: NoteType;
-  title: string;
+  title?: string;
   text: string;
-  page: string[]; //single page or page range
+  page: PageRange; //single page or page range
   image: string;
 }
 
@@ -54,4 +56,9 @@ export enum NoteType {
 export enum PageType {
   SINGLE = "Single",
   RANGE = "Range",
+}
+
+export interface PageRange {
+  from: number;
+  to?: number;
 }

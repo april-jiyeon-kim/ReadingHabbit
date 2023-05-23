@@ -15,8 +15,8 @@ const NotesQuotesTab: React.FC<Props> = ({ note, showBookInfo = true }) => {
       <RightContainer>
         {showBookInfo && <NoteTitle>{note.title}</NoteTitle>}
         <PageText>
-          p.{note.page[0]}
-          {note.page.length > 1 && `- p.${note.page[1]}`}
+          {note.page.from && `p. ${note.page.from}`}
+          {note.page.to && ` ~ p. ${note.page.to}`}
         </PageText>
         <NoteText>{note.text}</NoteText>
       </RightContainer>

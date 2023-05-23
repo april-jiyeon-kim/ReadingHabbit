@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { FlatList, Text, View, Alert } from "react-native";
-import { Book, NoteType, ReadingStatus } from "../types/bookTypes";
+import { Book, Note, NoteType, ReadingStatus } from "../types/bookTypes";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { HeaderText } from "../styles/text";
 import { Row } from "../styles/layout";
@@ -20,7 +20,9 @@ import SetStatus from "../components/screens/Detail/SetStatus";
 import { translateReadingStatus } from "../utils";
 import SetPage from "../components/screens/WriteNote/SetPage";
 import SetCurrentPage from "../components/screens/Detail/SetCurrentPage";
+import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
+import { useFocusEffect } from "@react-navigation/native";
 
 type RootStackParamList = {
   Detail: Book;
@@ -29,95 +31,12 @@ type RootStackParamList = {
 type DetailScreenProps = NativeStackScreenProps<RootStackParamList, "Detail">;
 type BottomSheetType = "Status" | "Page" | "Action";
 
-const mockData = [
-  {
-    id: 1,
-    noteType: NoteType.QUOTES,
-    title: "Book Title",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-  {
-    id: 2,
-    noteType: NoteType.QUOTES,
-    title: "Book Title",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120", "130"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-  {
-    id: 3,
-    noteType: NoteType.NOTES,
-    title: "Book Title1",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-  {
-    id: 4,
-    noteType: NoteType.NOTES,
-    title: "Book Title2",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-  {
-    id: 5,
-    noteType: NoteType.NOTES,
-    title: "Book Title3",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-  {
-    id: 6,
-    noteType: NoteType.NOTES,
-    title: "Book Title4",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-  {
-    id: 7,
-    noteType: NoteType.NOTES,
-    title: "Book Title5",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-  {
-    id: 8,
-    noteType: NoteType.NOTES,
-    title: "Book Title6",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-  {
-    id: 9,
-    noteType: NoteType.NOTES,
-    title: "Book Tidtle7",
-    text: "He'll want to use your yacht, and I don't want this thing smelling like fish. He'll want to use your yacht, and I don't want this thing smelling like fish.",
-    page: ["120"],
-    image:
-      "https://shopping-phinf.pstatic.net/main_3943762/39437627619.20230425163911.jpg",
-  },
-];
-
 const Detail: React.FC<DetailScreenProps> = ({
   navigation,
   route: { params: book },
 }) => {
   const [tab, setTab] = useState(NoteType.QUOTES);
+  const [notes, setNotes] = useState<Note[]>([]);
   const [readingStatus, setReadingStatus] = useState(book.reading.status);
   const [currentPage, setCurrentPage] = useState(book.reading.currentPage || 0);
   const [selectedBottomSheet, setSelectedBottomSheet] =
@@ -128,10 +47,6 @@ const Detail: React.FC<DetailScreenProps> = ({
   const handleTabChange = (newTab: NoteType) => {
     setTab(newTab);
   };
-
-  const data = useMemo(() => {
-    return mockData.filter((it) => it.noteType === tab);
-  }, [tab]);
 
   const handlePresentModalPress = (selected: BottomSheetType) => {
     setSelectedBottomSheet(selected);
@@ -203,6 +118,25 @@ const Detail: React.FC<DetailScreenProps> = ({
     }
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const unsubscribe = firestore()
+        .collection("notes")
+        .where("bookId", "==", book.id)
+        .where("uid", "==", auth().currentUser?.uid)
+        .where("noteType", "==", tab)
+        .onSnapshot((snapshot) => {
+          const notesArray = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as Note[];
+          setNotes(notesArray);
+        });
+      console.log("load");
+      return () => unsubscribe();
+    }, [tab])
+  );
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitleStyle: { fontSize: 14 },
@@ -243,7 +177,7 @@ const Detail: React.FC<DetailScreenProps> = ({
       <NotesContainer>
         <ToggleTab activeTab={tab} onChangeTab={handleTabChange} />
         <FlatList
-          data={data}
+          data={notes}
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (

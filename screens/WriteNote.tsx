@@ -5,7 +5,9 @@ import styled from "styled-components/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Book } from "../types/bookTypes";
+import { Book, Note, NoteType, PageRange } from "../types/bookTypes";
+import { firebase } from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
 import BottomSheet, {
   BottomSheetModal,
   BottomSheetModalProvider,
@@ -25,7 +27,9 @@ type WriteNoteScreenProps = NativeStackScreenProps<
 
 const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
   const { book } = route.params;
+  const user = firebase.auth().currentUser;
   const [note, setNote] = useState("");
+  const [page, setPage] = useState<PageRange>({ from: 120, to: 123 });
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["25%", "30%", "45%"], []);
 
@@ -46,9 +50,25 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
   );
 
   const onChangeText = (text: string) => setNote(text);
-  const handleSaveNote = () => {
-    console.log(note);
-    navigation.goBack();
+  const handleSaveNote = async () => {
+    if (!user || note === "") return;
+    try {
+      const noteData = {
+        text: note,
+        bookId: book.id,
+        noteType: NoteType.NOTES,
+        uid: user.uid,
+        page: page,
+        image: book.image,
+      };
+      const notesCollection = firestore().collection("notes");
+      await notesCollection.add(noteData).then(() => {
+        console.log("Note added!");
+        navigation.goBack();
+      });
+    } catch (error) {
+      console.log("Error writing note:", error);
+    }
   };
 
   const handlePresentModalPress = () => {
@@ -65,14 +85,17 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
         </TouchableOpacity>
       ),
     });
-  }, [navigation]);
+  }, [navigation, note]);
 
   return (
     <BottomSheetModalProvider>
       <Wrapper>
         <ButtonContainer>
           <PageBtn onPress={handlePresentModalPress}>
-            <PageText>P. 120</PageText>
+            <PageText>
+              {page.from && `p. ${page.from}`}
+              {page.to && ` ~ p. ${page.to}`}
+            </PageText>
           </PageBtn>
         </ButtonContainer>
         <TextArea
