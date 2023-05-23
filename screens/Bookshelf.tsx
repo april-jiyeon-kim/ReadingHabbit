@@ -27,6 +27,7 @@ import {
   WRITE_NOTE_SCREEN,
 } from "../constants/screenName";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import auth from "@react-native-firebase/auth";
 
 const Bookshelf: React.FC<NativeStackScreenProps<any, "Bookshelf">> = ({
   navigation: { navigate },
@@ -52,12 +53,12 @@ const Bookshelf: React.FC<NativeStackScreenProps<any, "Bookshelf">> = ({
     React.useCallback(() => {
       const unsubscribe = firestore()
         .collection("books")
+        .where("uid", "==", auth().currentUser?.uid)
         .onSnapshot((snapshot) => {
           const booksArray = snapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
           })) as Book[];
-
           setBooks(booksArray);
           setLoading(false);
         });
