@@ -23,6 +23,10 @@ import SetCurrentPage from "../components/screens/Detail/SetCurrentPage";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
+import { AntDesign } from "@expo/vector-icons";
+import { LIGHT_GREY } from "../styles/colors";
+import { EDIT_TAGS_SCREEN } from "../constants/screenName";
+import Tag from "../components/common/Tag";
 
 type RootStackParamList = {
   Detail: Book;
@@ -131,11 +135,19 @@ const Detail: React.FC<DetailScreenProps> = ({
             ...doc.data(),
           })) as Note[];
           setNotes(notesArray);
+          console.log(book);
         });
-      console.log("load");
       return () => unsubscribe();
     }, [tab])
   );
+
+  const goToEditTags = () => {
+    //@ts-ignore
+    navigation.navigate("Stack", {
+      screen: EDIT_TAGS_SCREEN,
+      params: { book },
+    });
+  };
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -165,7 +177,6 @@ const Detail: React.FC<DetailScreenProps> = ({
             <StatusBtn onPress={() => handlePresentModalPress("Status")}>
               <Status label={translateReadingStatus(readingStatus)} />
             </StatusBtn>
-
             <TouchableOpacity onPress={() => handlePresentModalPress("Page")}>
               <ProgressWrapper>
                 <ReadingProgress book={book} />
@@ -173,6 +184,14 @@ const Detail: React.FC<DetailScreenProps> = ({
             </TouchableOpacity>
           </BookInfo>
         </BookInfoContainer>
+
+        <TagsWrapper>
+          {book.tags && book.tags.map((it) => <Tag label={it} selected />)}
+          <TagsBtn onPress={goToEditTags}>
+            <AntDesign name="tagso" size={24} color="#797979" />
+            <TagsText>{book.tags ? "Edit tags" : "Add tags"}</TagsText>
+          </TagsBtn>
+        </TagsWrapper>
       </BookContainer>
       <NotesContainer>
         <ToggleTab activeTab={tab} onChangeTab={handleTabChange} />
@@ -251,4 +270,17 @@ const Seperator = styled.View`
 
 const StatusBtn = styled.TouchableOpacity`
   width: 135px;
+`;
+
+const TagsBtn = styled.TouchableOpacity`
+  flex-direction: row;
+`;
+const TagsText = styled.Text`
+  padding-left: 4px;
+  color: "#797979";
+`;
+
+const TagsWrapper = styled(Row)`
+  flex-direction: row;
+  flex-wrap: wrap;
 `;

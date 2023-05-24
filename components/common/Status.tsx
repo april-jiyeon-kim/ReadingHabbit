@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import { LIGHT_BLUE } from "../../styles/colors";
+import { DARK_BLUE, LIGHT_BLUE } from "../../styles/colors";
 
 type Props = {
   label: string;
@@ -14,7 +14,7 @@ const Status = ({ label }: Props) => {
 };
 
 const Wrapper = styled.View`
-  background-color: ${LIGHT_BLUE};
+  background-color: ${DARK_BLUE};
   border-radius: 9px;
   padding: 2px 6px;
   height: 18px;

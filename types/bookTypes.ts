@@ -22,6 +22,7 @@ export interface Book {
   isWishList: boolean;
   pageCount?: number;
   uid: string;
+  tags?: string[];
 }
 
 export enum ReadingStatus {
@@ -61,4 +62,9 @@ export enum PageType {
 export interface PageRange {
   from: number;
   to?: number;
+}
+
+export interface Tag {
+  id: string;
+  text: string;
 }
