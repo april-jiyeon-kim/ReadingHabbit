@@ -52,13 +52,11 @@ const EditTags: React.FC<EditTagsScreenProps> = ({ navigation, route }) => {
   };
 
   const handleDeleteTag = _.debounce((tag: string) => {
-    console.log("delete");
     setSelectedTags(selectedTags.filter((t) => t !== tag));
     setTagList(tagList.filter((t) => t !== tag));
   }, 100);
 
   const handleSelectTag = (tag: string) => {
-    console.log("select");
     if (selectedTags.includes(tag)) {
       setSelectedTags(selectedTags.filter((t) => t !== tag));
     } else {
@@ -82,16 +80,28 @@ const EditTags: React.FC<EditTagsScreenProps> = ({ navigation, route }) => {
 
   useFocusEffect(
     React.useCallback(() => {
+      const tagsSet = new Set<string>();
       const unsubscribe = firestore()
         .collection("books")
-        .doc(book.id)
+        .where("uid", "==", user?.uid)
         .onSnapshot((snapshot) => {
-          const bookData = snapshot.data();
-          if (bookData?.tags) {
-            setTagList(bookData.tags);
-            setSelectedTags(bookData.tags);
-          }
+          const books = snapshot.docs;
+          books.forEach((doc) => {
+            const bookData = doc.data();
+            if (bookData.tags) {
+              bookData.tags.forEach((tag: string) => {
+                if (book.id === doc.id) {
+                  setSelectedTags((prevTags) => [tag, ...prevTags]);
+                }
+                tagsSet.add(tag);
+              });
+            }
+          });
+
+          const tagsArray = Array.from(tagsSet);
+          setTagList(tagsArray);
         });
+
       return () => unsubscribe();
     }, [])
   );
