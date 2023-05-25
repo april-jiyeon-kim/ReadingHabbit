@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { View, Text, TextInput } from "react-native";
 import { DARK_BLUE, LIGHT_GREY } from "../styles/colors";
 import styled from "styled-components/native";
@@ -32,6 +38,7 @@ const EditNote: React.FC<EditNoteScreenProps> = ({ navigation, route }) => {
   const [page, setPage] = useState<PageRange>({ from: 120, to: 123 });
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["25%", "30%", "45%"], []);
+  const noteInput = useRef<TextInput>(null);
 
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
@@ -70,6 +77,10 @@ const EditNote: React.FC<EditNoteScreenProps> = ({ navigation, route }) => {
     bottomSheetRef.current?.expand();
   };
 
+  useEffect(() => {
+    noteInput.current?.focus();
+  }, []);
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "Edit Note",
@@ -94,6 +105,7 @@ const EditNote: React.FC<EditNoteScreenProps> = ({ navigation, route }) => {
           </PageBtn>
         </ButtonContainer>
         <TextArea
+          ref={noteInput}
           placeholder="Share your thoughts here..."
           placeholderTextColor={LIGHT_GREY}
           multiline
