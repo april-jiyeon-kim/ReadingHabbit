@@ -11,22 +11,10 @@ import { useFocusEffect } from "@react-navigation/native";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 
-const mockData = [
-  { name: "History", y: 1 },
-  { name: "Novel", y: 2 },
-  { name: "Economics", y: 3 },
-  { name: "Entertain", y: 1 },
-  { name: "Real Estate", y: 7 },
-  { name: "Real Estate", y: 5 },
-  { name: "Real Estate", y: 6 },
-];
-
 type UserTag = {
   name: string;
   y: number;
 };
-
-const colorScale = ["tomato", "orange", "gold", "cyan", "navy"];
 
 const Home = () => {
   const [userTags, setUserTags] = useState<UserTag[]>([]);

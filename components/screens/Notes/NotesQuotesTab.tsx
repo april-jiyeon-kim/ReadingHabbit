@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components/native";
 import { Row } from "../../../styles/layout";
 import { Note } from "../../../types/bookTypes";
+import { EDIT_NOTE_SCREEN } from "../../../constants/screenName";
+import { useNavigation } from "@react-navigation/native";
 
 interface Props {
   note: Note;
@@ -9,10 +11,19 @@ interface Props {
 }
 
 const NotesQuotesTab: React.FC<Props> = ({ note, showBookInfo = true }) => {
+  const navigation = useNavigation();
+  const goToEditNote = () => {
+    //@ts-ignore
+    navigation.navigate("Stack", {
+      screen: EDIT_NOTE_SCREEN,
+      params: { note },
+    });
+  };
+
   return (
     <NoteContainer key={note.id}>
       {showBookInfo && <CoverImg source={{ uri: note.image }} />}
-      <RightContainer>
+      <RightContainer onPress={goToEditNote}>
         {showBookInfo && <NoteTitle>{note.title}</NoteTitle>}
         <PageText>
           {note.page.from && `p. ${note.page.from}`}
@@ -29,7 +40,7 @@ export default NotesQuotesTab;
 const NoteContainer = styled(Row)`
   width: 100%;
 `;
-const RightContainer = styled.View`
+const RightContainer = styled.TouchableOpacity`
   flex: 1;
   width: 100%;
   border-bottom-width: 1px;
