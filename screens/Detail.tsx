@@ -27,9 +27,13 @@ import { AntDesign } from "@expo/vector-icons";
 import { LIGHT_GREY } from "../styles/colors";
 import { EDIT_TAGS_SCREEN } from "../constants/screenName";
 import Tag from "../components/common/Tag";
+import { useFirestoreConnect } from "react-redux-firebase";
+import { connect, useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import { compose } from "redux";
 
 type RootStackParamList = {
-  Detail: Book;
+  Detail: { bookId: string };
 };
 
 type DetailScreenProps = NativeStackScreenProps<RootStackParamList, "Detail">;
@@ -37,12 +41,36 @@ type BottomSheetType = "Status" | "Page" | "Action";
 
 const Detail: React.FC<DetailScreenProps> = ({
   navigation,
-  route: { params: book },
+  route: { params },
 }) => {
+  const { bookId } = params;
   const [tab, setTab] = useState(NoteType.QUOTES);
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [readingStatus, setReadingStatus] = useState(book.reading.status);
-  const [currentPage, setCurrentPage] = useState(book.reading.currentPage || 0);
+
+  useFirestoreConnect([
+    { collection: "books", doc: bookId },
+    {
+      collection: "notes",
+      where: [
+        ["uid", "==", auth().currentUser?.uid],
+        ["bookId", "==", bookId],
+        ["noteType", "==", tab],
+      ],
+    },
+  ]);
+  const book = useSelector(
+    (state: RootState) =>
+      (state.firestore.data.books && state.firestore.data.books[bookId]) || []
+  ) as Book;
+
+  const notes = useSelector(
+    (state: RootState) => state.firestore.ordered.notes || []
+  ) as Note[];
+
+  const [readingStatus, setReadingStatus] = useState(book?.reading.status);
+
+  const [currentPage, setCurrentPage] = useState(
+    book?.reading.currentPage || 0
+  );
   const [selectedBottomSheet, setSelectedBottomSheet] =
     useState<BottomSheetType>("Status");
 
@@ -122,25 +150,6 @@ const Detail: React.FC<DetailScreenProps> = ({
     }
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const unsubscribe = firestore()
-        .collection("notes")
-        .where("bookId", "==", book.id)
-        .where("uid", "==", auth().currentUser?.uid)
-        .where("noteType", "==", tab)
-        .onSnapshot((snapshot) => {
-          const notesArray = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as Note[];
-          setNotes(notesArray);
-          console.log(book);
-        });
-      return () => unsubscribe();
-    }, [tab])
-  );
-
   const goToEditTags = () => {
     //@ts-ignore
     navigation.navigate("Stack", {
@@ -162,70 +171,73 @@ const Detail: React.FC<DetailScreenProps> = ({
   }, [navigation, readingStatus]);
 
   return (
-    <BottomSheetModalProvider>
-      <BookContainer>
-        <HeaderText>
-          {book.title.slice(0, 28)} {book.title.length > 28 ? "..." : null}
-        </HeaderText>
-        <BookInfoContainer>
-          <CoverImg source={{ uri: book.image }} />
-          <BookInfo>
-            <View>
-              <BottomText>{book.author}</BottomText>
-              <BottomText>{book.publisher}</BottomText>
-            </View>
-            <StatusBtn onPress={() => handlePresentModalPress("Status")}>
-              <Status label={translateReadingStatus(readingStatus)} />
-            </StatusBtn>
-            <TouchableOpacity onPress={() => handlePresentModalPress("Page")}>
-              <ProgressWrapper>
-                <ReadingProgress book={book} />
-              </ProgressWrapper>
-            </TouchableOpacity>
-          </BookInfo>
-        </BookInfoContainer>
+    book && (
+      <BottomSheetModalProvider>
+        <BookContainer>
+          <HeaderText>
+            {book.title.slice(0, 28)} {book.title.length > 28 ? "..." : null}
+          </HeaderText>
+          <BookInfoContainer>
+            <CoverImg source={{ uri: book.image }} />
+            <BookInfo>
+              <View>
+                <BottomText>{book.author}</BottomText>
+                <BottomText>{book.publisher}</BottomText>
+              </View>
+              <StatusBtn onPress={() => handlePresentModalPress("Status")}>
+                <Status label={translateReadingStatus(readingStatus)} />
+              </StatusBtn>
+              <TouchableOpacity onPress={() => handlePresentModalPress("Page")}>
+                <ProgressWrapper>
+                  <ReadingProgress book={book} />
+                </ProgressWrapper>
+              </TouchableOpacity>
+            </BookInfo>
+          </BookInfoContainer>
 
-        <TagsWrapper>
-          {book.tags && book.tags.map((it) => <Tag label={it} selected />)}
-          <TagsBtn onPress={goToEditTags}>
-            <AntDesign name="tagso" size={24} color="#797979" />
-            <TagsText>{book.tags ? "Edit tags" : "Add tags"}</TagsText>
-          </TagsBtn>
-        </TagsWrapper>
-      </BookContainer>
-      <NotesContainer>
-        <ToggleTab activeTab={tab} onChangeTab={handleTabChange} />
-        <FlatList
-          data={notes}
-          keyExtractor={(item) => item.id.toString()}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <NotesQuotesTab note={item} showBookInfo={false} />
-          )}
-          ItemSeparatorComponent={Seperator}
-        />
-      </NotesContainer>
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={-1}
-        snapPoints={snapPoints}
-        backdropComponent={renderBackdrop}
-      >
-        {selectedBottomSheet === "Status" && (
-          <SetStatus status={readingStatus} onSave={handleStatusChange} />
-        )}
-        {selectedBottomSheet === "Page" && (
-          <SetCurrentPage
-            currentPage={currentPage}
-            onSave={handleCurrentPageChange}
+          <TagsWrapper>
+            {book.tags && book.tags.map((it) => <Tag label={it} selected />)}
+            <TagsBtn onPress={goToEditTags}>
+              <AntDesign name="tagso" size={24} color="#797979" />
+              <TagsText>{book.tags ? "Edit tags" : "Add tags"}</TagsText>
+            </TagsBtn>
+          </TagsWrapper>
+        </BookContainer>
+        <NotesContainer>
+          <ToggleTab activeTab={tab} onChangeTab={handleTabChange} />
+          <FlatList
+            data={notes}
+            keyExtractor={(item) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <NotesQuotesTab note={item} showBookInfo={false} />
+            )}
+            ItemSeparatorComponent={Seperator}
           />
-        )}
-      </BottomSheet>
-    </BottomSheetModalProvider>
+        </NotesContainer>
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={-1}
+          snapPoints={snapPoints}
+          backdropComponent={renderBackdrop}
+        >
+          {selectedBottomSheet === "Status" && (
+            <SetStatus status={readingStatus} onSave={handleStatusChange} />
+          )}
+          {selectedBottomSheet === "Page" && (
+            <SetCurrentPage
+              currentPage={currentPage}
+              onSave={handleCurrentPageChange}
+            />
+          )}
+        </BottomSheet>
+      </BottomSheetModalProvider>
+    )
   );
 };
 
 export default Detail;
+
 const ProgressWrapper = styled.View`
   height: 100%;
 `;

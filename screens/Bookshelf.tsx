@@ -71,7 +71,7 @@ const Bookshelf: React.FC<NativeStackScreenProps<any, "Bookshelf">> = ({
     //@ts-ignore
     navigation.navigate("Stack", {
       screen: DETAIL_SCREEN,
-      params: { ...book },
+      params: { bookId: book.id, book },
     });
   };
 

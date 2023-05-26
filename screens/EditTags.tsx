@@ -39,7 +39,6 @@ const EditTags: React.FC<EditTagsScreenProps> = ({ navigation, route }) => {
   const [tagList, setTagList] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
-
   const onChangeText = (text: string) => setNewTag(text);
 
   const handleAddTag = () => {
@@ -72,7 +71,7 @@ const EditTags: React.FC<EditTagsScreenProps> = ({ navigation, route }) => {
       await booksCollection.doc(book.id).update({
         tags: selectedTags,
       });
-      console.log("Tags added!");
+      navigation.goBack();
     } catch (error) {
       console.error("Error updating tags:", error);
     }
