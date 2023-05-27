@@ -48,6 +48,7 @@ const EditTags: React.FC<EditTagsScreenProps> = ({ navigation, route }) => {
       setTagList([newTag, ...tagList]);
       setSelectedTags([newTag, ...selectedTags]);
     }
+    setNewTag("");
   };
 
   const handleDeleteTag = _.debounce((tag: string) => {
@@ -120,15 +121,18 @@ const EditTags: React.FC<EditTagsScreenProps> = ({ navigation, route }) => {
   return (
     <Wrapper>
       <HeaderText>Edit Tags</HeaderText>
-      <InputText
-        value={newTag}
-        onChangeText={onChangeText}
-        placeholder={"Please enter a tag"}
-        editable
-      />
-      <TouchableOpacity onPress={handleAddTag}>
-        <Text>+</Text>
-      </TouchableOpacity>
+      <InputWrapper>
+        <InputText
+          value={newTag}
+          onChangeText={onChangeText}
+          placeholder={"Please enter a tag"}
+          editable
+          maxLength={24}
+        />
+        <AddBtn onPress={handleAddTag}>
+          <AddBtnText>ADD</AddBtnText>
+        </AddBtn>
+      </InputWrapper>
       <TagsWrapper>
         {tagList.map((it) => (
           <Tag
@@ -164,3 +168,17 @@ const TagsWrapper = styled(Row)`
   flex-direction: row;
   flex-wrap: wrap;
 `;
+
+const AddBtn = styled.TouchableOpacity`
+  position: absolute;
+  right: 5px;
+  background-color: ${DARK_BLUE};
+  padding: 2px 8px;
+  border-radius: 8px;
+`;
+
+const AddBtnText = styled.Text`
+  color: white;
+`;
+
+const InputWrapper = styled.View``;
