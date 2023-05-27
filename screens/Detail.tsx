@@ -212,11 +212,7 @@ const Detail: React.FC<DetailScreenProps> = ({
                   }
                 />
               </StatusBtn>
-              <TouchableOpacity onPress={() => handlePresentModalPress("Page")}>
-                <ProgressWrapper>
-                  <ReadingProgress book={book} />
-                </ProgressWrapper>
-              </TouchableOpacity>
+
               <ButtonWrapper onPress={goToWriteNote}>
                 <MaterialCommunityIcons
                   name="note-plus-outline"
@@ -286,7 +282,6 @@ const CoverImg = styled.Image`
 
 const BookInfo = styled.View`
   margin-left: 10px;
-  justify-content: space-between;
   height: 136px;
   flex: 1;
 `;
