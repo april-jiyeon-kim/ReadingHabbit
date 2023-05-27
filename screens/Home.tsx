@@ -57,28 +57,30 @@ const Home = () => {
     <View>
       <Title>Genre bias</Title>
       <BiasContainer>
-        <VictoryPie
-          colorScale={"qualitative"}
-          data={userTags}
-          innerRadius={120}
-          labelRadius={90}
-          width={250}
-          height={250}
-          labels={({ datum }) =>
-            `${Math.floor((datum.y / totalAmount) * 100)}%`
-          }
-          style={{
-            labels: { fill: "white", fontSize: 14 },
-          }}
-        />
-        <VictoryLegend
-          orientation="horizontal"
-          itemsPerRow={1}
-          colorScale={"qualitative"}
-          data={userTags}
-          height={100}
-          x={50}
-        />
+        <PieWrapper>
+          <VictoryPie
+            colorScale={"qualitative"}
+            data={userTags}
+            innerRadius={100}
+            labelRadius={70}
+            width={200}
+            height={200}
+            labels={({ datum }) =>
+              `${Math.floor((datum.y / totalAmount) * 100)}%`
+            }
+            style={{
+              labels: { fill: "white", fontSize: 14 },
+            }}
+          />
+        </PieWrapper>
+        <LegendWrapper>
+          <VictoryLegend
+            orientation="vertical"
+            colorScale={"qualitative"}
+            data={userTags}
+            x={50}
+          />
+        </LegendWrapper>
       </BiasContainer>
       <Title>Goals</Title>
       <SectionContainer>
@@ -91,6 +93,14 @@ export default Home;
 
 const BiasContainer = styled.View`
   margin: 40px 16px 0;
+  align-items: center;
+  flex-direction: row;
+`;
+const PieWrapper = styled.View`
+  margin-left: 20px;
+`;
+const LegendWrapper = styled.View`
+  justify-content: center;
   align-items: center;
 `;
 const SectionContainer = styled.View`
