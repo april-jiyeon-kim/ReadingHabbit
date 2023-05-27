@@ -32,7 +32,7 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
     //@ts-ignore
     navigation.navigate("Stack", {
       screen: DETAIL_SCREEN,
-      params: { ...book },
+      params: { bookId: book.id },
     });
   };
 

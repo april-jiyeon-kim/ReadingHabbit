@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { FlatList, Text, View, Alert } from "react-native";
 import { Book, Note, NoteType, ReadingStatus } from "../types/bookTypes";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -28,9 +34,8 @@ import { LIGHT_GREY } from "../styles/colors";
 import { EDIT_TAGS_SCREEN } from "../constants/screenName";
 import Tag from "../components/common/Tag";
 import { useFirestoreConnect } from "react-redux-firebase";
-import { connect, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { compose } from "redux";
 
 type RootStackParamList = {
   Detail: { bookId: string };
@@ -57,20 +62,28 @@ const Detail: React.FC<DetailScreenProps> = ({
       ],
     },
   ]);
+
   const book = useSelector(
     (state: RootState) =>
-      (state.firestore.data.books && state.firestore.data.books[bookId]) || []
+      state.firestore.data.books && state.firestore.data.books[bookId]
   ) as Book;
 
   const notes = useSelector(
     (state: RootState) => state.firestore.ordered.notes || []
   ) as Note[];
 
-  const [readingStatus, setReadingStatus] = useState(book?.reading.status);
-
-  const [currentPage, setCurrentPage] = useState(
-    book?.reading.currentPage || 0
+  const [readingStatus, setReadingStatus] = useState<ReadingStatus | undefined>(
+    undefined
   );
+  const [currentPage, setCurrentPage] = useState<number>(0);
+
+  useEffect(() => {
+    if (book) {
+      setReadingStatus(book.reading?.status);
+      setCurrentPage(book.reading?.currentPage || 0);
+    }
+  }, [book]);
+
   const [selectedBottomSheet, setSelectedBottomSheet] =
     useState<BottomSheetType>("Status");
 
@@ -185,7 +198,11 @@ const Detail: React.FC<DetailScreenProps> = ({
                 <BottomText>{book.publisher}</BottomText>
               </View>
               <StatusBtn onPress={() => handlePresentModalPress("Status")}>
-                <Status label={translateReadingStatus(readingStatus)} />
+                <Status
+                  label={
+                    readingStatus ? translateReadingStatus(readingStatus) : ""
+                  }
+                />
               </StatusBtn>
               <TouchableOpacity onPress={() => handlePresentModalPress("Page")}>
                 <ProgressWrapper>
@@ -221,7 +238,7 @@ const Detail: React.FC<DetailScreenProps> = ({
           snapPoints={snapPoints}
           backdropComponent={renderBackdrop}
         >
-          {selectedBottomSheet === "Status" && (
+          {selectedBottomSheet === "Status" && readingStatus && (
             <SetStatus status={readingStatus} onSave={handleStatusChange} />
           )}
           {selectedBottomSheet === "Page" && (
