@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { View, Text, TextInput } from "react-native";
+import { View, Text, TextInput, Alert } from "react-native";
 import { DARK_BLUE, LIGHT_GREY } from "../styles/colors";
 import styled from "styled-components/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -77,6 +77,28 @@ const EditNote: React.FC<EditNoteScreenProps> = ({ navigation, route }) => {
     bottomSheetRef.current?.expand();
   };
 
+  const onDelete = () => {
+    Alert.alert("Delete", "Are you sure you want to delete this book?", [
+      { text: "Cancel", onPress: () => {} },
+      { text: "Delete", onPress: handleDelete },
+    ]);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const notesCollection = firestore().collection("notes");
+      await notesCollection
+        .doc(note.id)
+        .delete()
+        .then(() => {
+          console.log("Note deleted!");
+        });
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error delete note:", error);
+    }
+  };
+
   useEffect(() => {
     noteInput.current?.focus();
   }, []);
@@ -86,9 +108,14 @@ const EditNote: React.FC<EditNoteScreenProps> = ({ navigation, route }) => {
       headerTitle: "Edit Note",
       headerTitleStyle: { fontSize: 14 },
       headerRight: () => (
-        <TouchableOpacity onPress={handleSaveNote}>
-          <Ionicons name="checkmark-sharp" size={24} color={DARK_BLUE} />
-        </TouchableOpacity>
+        <>
+          <TouchableOpacity onPress={handleSaveNote}>
+            <Ionicons name="checkmark-sharp" size={24} color={DARK_BLUE} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onDelete}>
+            <Ionicons name="trash-outline" size={24} color="black" />
+          </TouchableOpacity>
+        </>
       ),
     });
   }, [navigation, handleSaveNote]);
