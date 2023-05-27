@@ -31,11 +31,12 @@ import firestore from "@react-native-firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { LIGHT_GREY } from "../styles/colors";
-import { EDIT_TAGS_SCREEN } from "../constants/screenName";
+import { EDIT_TAGS_SCREEN, WRITE_NOTE_SCREEN } from "../constants/screenName";
 import Tag from "../components/common/Tag";
 import { useFirestoreConnect } from "react-redux-firebase";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 type RootStackParamList = {
   Detail: { bookId: string };
@@ -170,6 +171,13 @@ const Detail: React.FC<DetailScreenProps> = ({
       params: { book },
     });
   };
+  const goToWriteNote = () => {
+    //@ts-ignore
+    navigation.navigate("Stack", {
+      screen: WRITE_NOTE_SCREEN,
+      params: { book },
+    });
+  };
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -209,6 +217,13 @@ const Detail: React.FC<DetailScreenProps> = ({
                   <ReadingProgress book={book} />
                 </ProgressWrapper>
               </TouchableOpacity>
+              <ButtonWrapper onPress={goToWriteNote}>
+                <MaterialCommunityIcons
+                  name="note-plus-outline"
+                  size={32}
+                  color="black"
+                />
+              </ButtonWrapper>
             </BookInfo>
           </BookInfoContainer>
 
@@ -299,6 +314,7 @@ const Seperator = styled.View`
 
 const StatusBtn = styled.TouchableOpacity`
   width: 135px;
+  margin-top: 20px;
 `;
 
 const TagsBtn = styled.TouchableOpacity`
@@ -312,4 +328,12 @@ const TagsText = styled.Text`
 const TagsWrapper = styled(Row)`
   flex-direction: row;
   flex-wrap: wrap;
+`;
+
+const ButtonWrapper = styled.TouchableOpacity`
+  align-items: flex-end;
+  margin-top: 8px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 `;
