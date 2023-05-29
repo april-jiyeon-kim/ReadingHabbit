@@ -23,7 +23,7 @@ import BookCover from "../components/screens/Bookshelf/BookCover";
 import { useFocusEffect } from "@react-navigation/native";
 import auth from "@react-native-firebase/auth";
 
-function getFinishedBook(books: Book[]) {
+export function getFinishedBook(books: Book[]) {
   return books.filter((book) => book.reading.status === ReadingStatus.READ)
     .length;
 }

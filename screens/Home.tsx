@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { View, Text, Dimensions } from "react-native";
+import { View, Text, Dimensions, FlatList, ListRenderItem } from "react-native";
 import { SectionTitle } from "../components/screens/Bookshelf/SectionTitle";
 import styled from "styled-components/native";
 import { Svg, Path } from "react-native-svg";
@@ -12,6 +12,9 @@ import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { GOALS_SCREEN } from "../constants/screenName";
 import { useNavigation } from "@react-navigation/native";
+import { Goal } from "../types/bookTypes";
+import { getFinishedBook } from "./Goals";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 type UserTag = {
   name: string;
@@ -20,13 +23,14 @@ type UserTag = {
 
 const Home = () => {
   const [userTags, setUserTags] = useState<UserTag[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0);
   const navigation = useNavigation();
   useFocusEffect(
     React.useCallback(() => {
       const tagsObject: { [tag: string]: number } = {};
       let amount = 0;
-      const unsubscribe = firestore()
+      const booksUnsubscribe = firestore()
         .collection("books")
         .where("uid", "==", auth().currentUser?.uid)
         .onSnapshot((snapshot) => {
@@ -52,7 +56,21 @@ const Home = () => {
           setTotalAmount(amount);
         });
 
-      return () => unsubscribe();
+      const goalsUnsubscribe = firestore()
+        .collection("goals")
+        .where("uid", "==", auth().currentUser?.uid)
+        .onSnapshot((snapshot) => {
+          const goalsArray = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as Goal[];
+          setGoals(goalsArray);
+        });
+
+      return () => {
+        booksUnsubscribe();
+        goalsUnsubscribe();
+      };
     }, [])
   );
   const goToGoalsScreen = () => {
@@ -62,8 +80,27 @@ const Home = () => {
     });
   };
 
+  const renderGoals: ListRenderItem<Goal> = ({ item }) => (
+    <GoalWrapper>
+      <Text>{item.title}</Text>
+      <ProgressBar
+        value={
+          item.books
+            ? (getFinishedBook(item.books) / item.books.length) * 100
+            : 0
+        }
+        maxValue={100}
+        label={
+          item.books
+            ? `${getFinishedBook(item.books)}/${item.books.length} books`
+            : "no book"
+        }
+      />
+    </GoalWrapper>
+  );
+  const goalKeyExtractor = (item: Goal) => item.id;
   return (
-    <View>
+    <Container>
       <Title>Genre bias</Title>
       <BiasContainer>
         <PieWrapper>
@@ -91,13 +128,21 @@ const Home = () => {
           />
         </LegendWrapper>
       </BiasContainer>
-      <GoalsWrapper onPress={goToGoalsScreen}>
-        <Title>Goals</Title>
+      <GoalsWrapper>
+        <TouchableOpacity onPress={goToGoalsScreen}>
+          <Title>Goals</Title>
+        </TouchableOpacity>
         <SectionContainer>
-          <ProgressBar value={75} maxValue={100} label={"17/21 books"} />
+          <FlatList
+            data={goals}
+            renderItem={renderGoals}
+            contentContainerStyle={{ paddingTop: 14, paddingBottom: 52 }}
+            keyExtractor={goalKeyExtractor}
+            ItemSeparatorComponent={Seperator}
+          />
         </SectionContainer>
       </GoalsWrapper>
-    </View>
+    </Container>
   );
 };
 export default Home;
@@ -127,4 +172,13 @@ export const Title = styled.Text`
   color: ${LIGHT_BLACK};
 `;
 
-const GoalsWrapper = styled.TouchableOpacity``;
+const GoalsWrapper = styled.View`
+  flex: 1;
+`;
+const GoalWrapper = styled.View`
+  margin-bottom: 10px;
+`;
+
+const Seperator = styled.View`
+  height: 10px;
+`;
