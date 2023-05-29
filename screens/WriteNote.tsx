@@ -147,7 +147,6 @@ const TextArea = styled.TextInput`
 `;
 
 const ButtonContainer = styled.View`
-  /* position: absolute; */
   flex-direction: row;
   right: 12px;
   align-items: center;

@@ -21,6 +21,7 @@ import BottomSheet, {
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
 import SetPage from "../components/screens/WriteNote/SetPage";
+import ToggleTab from "../components/common/ToggleTab";
 
 type RootStackParamList = {
   EditNote: { note: Note };
@@ -39,6 +40,7 @@ const EditNote: React.FC<EditNoteScreenProps> = ({ navigation, route }) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["25%", "30%", "45%"], []);
   const noteInput = useRef<TextInput>(null);
+  const [tab, setTab] = useState(note.noteType);
 
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
@@ -60,18 +62,23 @@ const EditNote: React.FC<EditNoteScreenProps> = ({ navigation, route }) => {
     setNoteText(text);
   }, []);
 
+  const handleTabChange = (newTab: NoteType) => {
+    setTab(newTab);
+  };
+
   const handleSaveNote = useCallback(async () => {
     if (!user || noteText === "") return;
     try {
       const notesCollection = firestore().collection("notes");
       await notesCollection.doc(note.id).update({
         text: noteText,
+        noteType: tab,
       });
       navigation.goBack();
     } catch (error) {
       console.log("Error writing note:", error);
     }
-  }, [navigation, note, noteText, user]);
+  }, [navigation, note, noteText, user, tab]);
 
   const handlePresentModalPress = () => {
     bottomSheetRef.current?.expand();
@@ -124,6 +131,11 @@ const EditNote: React.FC<EditNoteScreenProps> = ({ navigation, route }) => {
     <BottomSheetModalProvider>
       <Wrapper>
         <ButtonContainer>
+          <ToggleTab
+            activeTab={tab}
+            onChangeTab={handleTabChange}
+            size="small"
+          />
           <PageBtn onPress={handlePresentModalPress}>
             <PageText>
               {page.from && `p. ${page.from}`}
@@ -159,7 +171,6 @@ export default EditNote;
 const Wrapper = styled.View`
   flex: 1;
   background-color: white;
-  padding-top: 34px;
 `;
 
 const TextArea = styled.TextInput`
@@ -173,9 +184,11 @@ const TextArea = styled.TextInput`
 `;
 
 const ButtonContainer = styled.View`
-  position: absolute;
-  margin-top: 12px;
+  flex-direction: row;
   right: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 16px;
 `;
 
 const PageBtn = styled.TouchableOpacity`
