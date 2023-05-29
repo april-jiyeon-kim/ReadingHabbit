@@ -23,6 +23,7 @@ export interface Book {
   pageCount?: number;
   uid: string;
   tags?: string[];
+  goal?: Goal;
 }
 
 export enum ReadingStatus {
@@ -67,4 +68,11 @@ export interface PageRange {
 export interface Tag {
   id: string;
   text: string;
+}
+
+export interface Goal {
+  id: string;
+  userId: string;
+  title: string;
+  books?: Book[];
 }

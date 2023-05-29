@@ -9,6 +9,7 @@ import {
   DETAIL_SCREEN,
   EDIT_NOTE_SCREEN,
   EDIT_TAGS_SCREEN,
+  GOALS_SCREEN,
   REGISTER_SCREEN,
   SEARCH_SCREEN,
   WRITE_NOTE_SCREEN,
@@ -17,6 +18,7 @@ import { DARK_BLUE } from "../styles/colors";
 import WriteNote from "../screens/WriteNote";
 import EditTags from "../screens/EditTags";
 import EditNote from "../screens/EditNote";
+import Goals from "../screens/Goals";
 
 const ScreenRegister = ({ navigation: { navigate } }) => (
   <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Bookshelf" })}>
@@ -37,6 +39,7 @@ const Stack = () => (
     <NativeStack.Screen name={EDIT_NOTE_SCREEN} component={EditNote} />
     <NativeStack.Screen name={DETAIL_SCREEN} component={Detail} />
     <NativeStack.Screen name={EDIT_TAGS_SCREEN} component={EditTags} />
+    <NativeStack.Screen name={GOALS_SCREEN} component={Goals} />
     <NativeStack.Screen
       name={REGISTER_SCREEN}
       component={Register}

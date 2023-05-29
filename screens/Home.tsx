@@ -10,6 +10,8 @@ import ProgressBar from "../components/common/ProgressBar";
 import { useFocusEffect } from "@react-navigation/native";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
+import { GOALS_SCREEN } from "../constants/screenName";
+import { useNavigation } from "@react-navigation/native";
 
 type UserTag = {
   name: string;
@@ -19,6 +21,7 @@ type UserTag = {
 const Home = () => {
   const [userTags, setUserTags] = useState<UserTag[]>([]);
   const [totalAmount, setTotalAmount] = useState<number>(0);
+  const navigation = useNavigation();
   useFocusEffect(
     React.useCallback(() => {
       const tagsObject: { [tag: string]: number } = {};
@@ -52,6 +55,12 @@ const Home = () => {
       return () => unsubscribe();
     }, [])
   );
+  const goToGoalsScreen = () => {
+    //@ts-ignore
+    navigation.navigate("Stack", {
+      screen: GOALS_SCREEN,
+    });
+  };
 
   return (
     <View>
@@ -82,10 +91,12 @@ const Home = () => {
           />
         </LegendWrapper>
       </BiasContainer>
-      <Title>Goals</Title>
-      <SectionContainer>
-        <ProgressBar value={75} maxValue={100} label={"17/21 books"} />
-      </SectionContainer>
+      <GoalsWrapper onPress={goToGoalsScreen}>
+        <Title>Goals</Title>
+        <SectionContainer>
+          <ProgressBar value={75} maxValue={100} label={"17/21 books"} />
+        </SectionContainer>
+      </GoalsWrapper>
     </View>
   );
 };
@@ -115,3 +126,5 @@ export const Title = styled.Text`
   margin-left: 16px;
   color: ${LIGHT_BLACK};
 `;
+
+const GoalsWrapper = styled.TouchableOpacity``;

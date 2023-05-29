@@ -8,3 +8,4 @@ export const WRITE_NOTE_SCREEN = "Write Note";
 export const EDIT_NOTE_SCREEN = "Edit Note";
 export const REGISTER_SCREEN = "Register";
 export const EDIT_TAGS_SCREEN = "Edit Tags";
+export const GOALS_SCREEN = "Goals";
