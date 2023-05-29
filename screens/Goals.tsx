@@ -4,7 +4,7 @@ import { Container, Row } from "../styles/layout";
 import { HeaderText } from "../styles/text";
 import { DARK_BLUE, LIGHT_GREY } from "../styles/colors";
 import { firebase } from "@react-native-firebase/auth";
-import { Book, Goal } from "../types/bookTypes";
+import { Book, Goal, ReadingStatus } from "../types/bookTypes";
 import firestore from "@react-native-firebase/firestore";
 import { useFirestoreConnect } from "react-redux-firebase";
 import { useSelector } from "react-redux";
@@ -22,6 +22,11 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import BookCover from "../components/screens/Bookshelf/BookCover";
 import { useFocusEffect } from "@react-navigation/native";
 import auth from "@react-native-firebase/auth";
+
+function getFinishedBook(books: Book[]) {
+  return books.filter((book) => book.reading.status === ReadingStatus.READ)
+    .length;
+}
 
 const Goals: React.FC<NativeStackScreenProps<any, "Goal">> = ({
   navigation: { navigate },
@@ -46,7 +51,6 @@ const Goals: React.FC<NativeStackScreenProps<any, "Goal">> = ({
           })) as Goal[];
           setGoals(goalsArray);
           setLoading(false);
-          console.log(goals);
         });
 
       return () => unsubscribe();
@@ -81,13 +85,19 @@ const Goals: React.FC<NativeStackScreenProps<any, "Goal">> = ({
   );
   const renderGoals: ListRenderItem<Goal> = ({ item }) => (
     <GoalsWrapper>
-      <GoalTitleText>{item.title}</GoalTitleText>
+      <GoalTitleText>
+        {item.title}{" "}
+        {item?.books
+          ? `${getFinishedBook(item.books)}/${item.books.length}`
+          : 0}
+      </GoalTitleText>
       {item.books ? (
         <FlatList
           data={item.books}
           keyExtractor={bookKeyExtractor}
+          horizontal
           ItemSeparatorComponent={Seperator}
-          contentContainerStyle={{ paddingRight: 24, paddingTop: 34 }}
+          contentContainerStyle={{ paddingRight: 24, paddingTop: 14 }}
           renderItem={renderBooks}
         />
       ) : (
@@ -119,7 +129,7 @@ const Goals: React.FC<NativeStackScreenProps<any, "Goal">> = ({
         data={goals}
         keyExtractor={goalKeyExtractor}
         ItemSeparatorComponent={Seperator}
-        contentContainerStyle={{ paddingRight: 24, paddingTop: 34 }}
+        contentContainerStyle={{ paddingRight: 24 }}
         renderItem={renderGoals}
       />
     </Wrapper>
@@ -163,12 +173,14 @@ const InputText = styled.TextInput`
   font-size: 12px;
 `;
 
-const GoalsWrapper = styled.View``;
+const GoalsWrapper = styled.View`
+  margin-top: 12px;
+`;
 
 const GoalTitleText = styled.Text``;
 
 const Seperator = styled.View`
-  height: 10px;
+  width: 10px;
 `;
 
 const Loader = styled.View`

@@ -5,8 +5,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { FlatList, Text, View, Alert } from "react-native";
-import { Book, Note, NoteType, ReadingStatus } from "../types/bookTypes";
+import { FlatList, Text, View, Alert, StyleSheet } from "react-native";
+import { Book, Goal, Note, NoteType, ReadingStatus } from "../types/bookTypes";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { HeaderText } from "../styles/text";
 import { Row } from "../styles/layout";
@@ -28,7 +28,7 @@ import SetPage from "../components/screens/WriteNote/SetPage";
 import SetCurrentPage from "../components/screens/Detail/SetCurrentPage";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
-import { useFocusEffect } from "@react-navigation/native";
+import { getActionFromState, useFocusEffect } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import { LIGHT_GREY } from "../styles/colors";
 import { EDIT_TAGS_SCREEN, WRITE_NOTE_SCREEN } from "../constants/screenName";
@@ -37,6 +37,7 @@ import { useFirestoreConnect } from "react-redux-firebase";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Picker } from "@react-native-picker/picker";
 
 type RootStackParamList = {
   Detail: { bookId: string };
@@ -51,7 +52,6 @@ const Detail: React.FC<DetailScreenProps> = ({
 }) => {
   const { bookId } = params;
   const [tab, setTab] = useState(NoteType.QUOTES);
-
   useFirestoreConnect([
     { collection: "books", doc: bookId },
     {
@@ -61,6 +61,10 @@ const Detail: React.FC<DetailScreenProps> = ({
         ["bookId", "==", bookId],
         ["noteType", "==", tab],
       ],
+    },
+    {
+      collection: "goals",
+      where: [["uid", "==", auth().currentUser?.uid]],
     },
   ]);
 
@@ -72,6 +76,10 @@ const Detail: React.FC<DetailScreenProps> = ({
   const notes = useSelector(
     (state: RootState) => state.firestore.ordered.notes || []
   ) as Note[];
+
+  const goals = useSelector(
+    (state: RootState) => state.firestore.ordered.goals || []
+  ) as Goal[];
 
   const [readingStatus, setReadingStatus] = useState<ReadingStatus | undefined>(
     undefined
@@ -146,7 +154,26 @@ const Detail: React.FC<DetailScreenProps> = ({
       console.error("Error delete book:", error);
     }
   };
+  const updateGoal = async (goalId: string) => {
+    try {
+      const batch = firestore().batch();
 
+      // Update the goal document in the "goals" collection
+      const goalDocRef = firestore().collection("goals").doc(goalId);
+      batch.update(goalDocRef, {
+        books: firestore.FieldValue.arrayUnion(book),
+      });
+      // Update the book document in the "books" collection
+      const bookDocRef = firestore().collection("books").doc(book.id);
+      batch.update(bookDocRef, {
+        goalId: goalId,
+      });
+
+      await batch.commit();
+    } catch (error) {
+      console.error("Error updating goal:", error);
+    }
+  };
   const updateStatus = async (status: ReadingStatus) => {
     try {
       const bookCollection = firestore().collection("books");
@@ -190,7 +217,6 @@ const Detail: React.FC<DetailScreenProps> = ({
       ),
     });
   }, [navigation, readingStatus]);
-
   return (
     book && (
       <BottomSheetModalProvider>
@@ -222,7 +248,6 @@ const Detail: React.FC<DetailScreenProps> = ({
               </ButtonWrapper>
             </BookInfo>
           </BookInfoContainer>
-
           <TagsWrapper>
             {book.tags && book.tags.map((it) => <Tag label={it} selected />)}
             <TagsBtn onPress={goToEditTags}>
@@ -230,6 +255,31 @@ const Detail: React.FC<DetailScreenProps> = ({
               <TagsText>{book.tags ? "Edit tags" : "Add tags"}</TagsText>
             </TagsBtn>
           </TagsWrapper>
+          <GoalWrapper>
+            <GoalText>GOAL</GoalText>
+            <Picker
+              selectedValue={goals.find((it) => it.id === book.goalId)?.id}
+              onValueChange={updateGoal}
+              style={{
+                width: 180,
+                height: 22,
+                backgroundColor: "#FCFDFE",
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.05,
+                shadowRadius: 4,
+                borderRadius: 6,
+              }}
+            >
+              {goals.map((it) => (
+                <Picker.Item
+                  label={it.title}
+                  value={it.id}
+                  style={{ fontSize: 12 }}
+                />
+              ))}
+            </Picker>
+          </GoalWrapper>
         </BookContainer>
         <NotesContainer>
           <ToggleTab activeTab={tab} onChangeTab={handleTabChange} />
@@ -331,4 +381,23 @@ const ButtonWrapper = styled.TouchableOpacity`
   position: absolute;
   bottom: 0;
   right: 0;
+`;
+
+const GoalWrapper = styled.View`
+  margin: 13px 0 32px;
+  flex-direction: row;
+  align-items: center;
+`;
+const GoalText = styled.Text`
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 10px;
+  color: #797979;
+  margin-right: 7px;
+`;
+
+const CustomPicker = styled(Picker)`
+  width: 160px;
+  height: 22px;
 `;
