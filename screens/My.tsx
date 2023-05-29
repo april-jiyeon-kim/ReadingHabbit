@@ -36,6 +36,7 @@ const NameText = styled.Text`
   font-weight: 400;
   font-size: 14px;
   line-height: 17px;
+  margin-bottom: 24px;
 `;
 
 const MenuItem = styled.TouchableOpacity`

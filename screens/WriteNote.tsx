@@ -15,6 +15,7 @@ import BottomSheet, {
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
 import SetPage from "../components/screens/WriteNote/SetPage";
+import ToggleTab from "../components/common/ToggleTab";
 
 type RootStackParamList = {
   WriteNote: { book: Book };
@@ -30,6 +31,7 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
   const user = firebase.auth().currentUser;
   const [note, setNote] = useState("");
   const [page, setPage] = useState<PageRange>({ from: 120, to: 123 });
+  const [tab, setTab] = useState(NoteType.QUOTES);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["25%", "30%", "45%"], []);
 
@@ -48,6 +50,9 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
     ),
     []
   );
+  const handleTabChange = (newTab: NoteType) => {
+    setTab(newTab);
+  };
 
   const onChangeText = (text: string) => setNote(text);
   const handleSaveNote = async () => {
@@ -56,7 +61,7 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
       const noteData = {
         text: note,
         bookId: book.id,
-        noteType: NoteType.NOTES,
+        noteType: tab,
         uid: user.uid,
         page: page,
         image: book.image,
@@ -91,6 +96,11 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
     <BottomSheetModalProvider>
       <Wrapper>
         <ButtonContainer>
+          <ToggleTab
+            activeTab={tab}
+            onChangeTab={handleTabChange}
+            size="small"
+          />
           <PageBtn onPress={handlePresentModalPress}>
             <PageText>
               {page.from && `p. ${page.from}`}
@@ -124,7 +134,6 @@ export default WriteNote;
 const Wrapper = styled.View`
   flex: 1;
   background-color: white;
-  padding-top: 34px;
 `;
 
 const TextArea = styled.TextInput`
@@ -138,9 +147,12 @@ const TextArea = styled.TextInput`
 `;
 
 const ButtonContainer = styled.View`
-  position: absolute;
-  margin-top: 12px;
+  /* position: absolute; */
+  flex-direction: row;
   right: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 16px;
 `;
 
 const PageBtn = styled.TouchableOpacity`
