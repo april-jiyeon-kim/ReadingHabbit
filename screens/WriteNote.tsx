@@ -11,7 +11,6 @@ import firestore from "@react-native-firebase/firestore";
 
 import SetPage from "../components/screens/WriteNote/SetPage";
 import ToggleTab from "../components/common/ToggleTab";
-import InputModal from "../components/common/InputModal";
 
 type RootStackParamList = {
   WriteNote: { book: Book };
