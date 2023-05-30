@@ -79,7 +79,10 @@ const Goals: React.FC<NativeStackScreenProps<any, "Goal">> = ({
   const renderBooks: ListRenderItem<Book> = ({ item }) => (
     <TouchableWithoutFeedback>
       <View>
-        <BookCover image={item.image} />
+        <BookCover
+          image={item.image}
+          read={item.reading.status === ReadingStatus.READ}
+        />
       </View>
     </TouchableWithoutFeedback>
   );
