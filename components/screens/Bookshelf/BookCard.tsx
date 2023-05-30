@@ -56,12 +56,12 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
             <CoverImg source={{ uri: book.image }} />
           </TouchableWithoutFeedback>
           <BookDetail>
-            <Row>
-              {book.genres.map((genre) => (
-                <Tag key={genre} label={genre} />
-              ))}
-            </Row>
-            <ReadingProgress book={book} />
+            <TagsWrapper>
+              {book.tags &&
+                book.tags.map((genre) => (
+                  <Tag key={genre} label={genre} selected />
+                ))}
+            </TagsWrapper>
             <ButtonWrapper onPress={goToWriteNote}>
               <MaterialCommunityIcons
                 name="note-plus-outline"
@@ -119,4 +119,9 @@ const ButtonWrapper = styled.TouchableOpacity`
   position: absolute;
   bottom: 0;
   right: 0;
+`;
+
+const TagsWrapper = styled(Row)`
+  flex-direction: row;
+  flex-wrap: wrap;
 `;
