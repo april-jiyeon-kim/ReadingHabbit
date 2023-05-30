@@ -238,7 +238,31 @@ const Detail: React.FC<DetailScreenProps> = ({
                   }
                 />
               </StatusBtn>
-
+              <GoalWrapper>
+                <GoalText>GOAL</GoalText>
+                <Picker
+                  selectedValue={goals.find((it) => it.id === book.goalId)?.id}
+                  onValueChange={updateGoal}
+                  style={{
+                    width: 180,
+                    height: 22,
+                    backgroundColor: "#FCFDFE",
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.05,
+                    shadowRadius: 4,
+                    borderRadius: 6,
+                  }}
+                >
+                  {goals.map((it) => (
+                    <Picker.Item
+                      label={it.title}
+                      value={it.id}
+                      style={{ fontSize: 12 }}
+                    />
+                  ))}
+                </Picker>
+              </GoalWrapper>
               <ButtonWrapper onPress={goToWriteNote}>
                 <MaterialCommunityIcons
                   name="note-plus-outline"
@@ -255,34 +279,9 @@ const Detail: React.FC<DetailScreenProps> = ({
               <TagsText>{book.tags ? "Edit tags" : "Add tags"}</TagsText>
             </TagsBtn>
           </TagsWrapper>
-          <GoalWrapper>
-            <GoalText>GOAL</GoalText>
-            <Picker
-              selectedValue={goals.find((it) => it.id === book.goalId)?.id}
-              onValueChange={updateGoal}
-              style={{
-                width: 180,
-                height: 22,
-                backgroundColor: "#FCFDFE",
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.05,
-                shadowRadius: 4,
-                borderRadius: 6,
-              }}
-            >
-              {goals.map((it) => (
-                <Picker.Item
-                  label={it.title}
-                  value={it.id}
-                  style={{ fontSize: 12 }}
-                />
-              ))}
-            </Picker>
-          </GoalWrapper>
         </BookContainer>
         <NotesContainer>
-          <ToggleTab activeTab={tab} onChangeTab={handleTabChange} />
+          <CustomToggleTab activeTab={tab} onChangeTab={handleTabChange} />
           <FlatList
             data={notes}
             keyExtractor={(item) => item.id.toString()}
@@ -397,7 +396,6 @@ const GoalText = styled.Text`
   margin-right: 7px;
 `;
 
-const CustomPicker = styled(Picker)`
-  width: 160px;
-  height: 22px;
+const CustomToggleTab = styled(ToggleTab)`
+  margin: 10px 0 17px 0;
 `;

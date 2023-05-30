@@ -48,7 +48,6 @@ const Wrapper = styled(Row)<{ size: string }>`
   border-radius: 20px;
   background-color: #f6f6f6;
   padding: 2px;
-  margin: 10px 0 17px 0;
 `;
 
 const Tab = styled.TouchableOpacity<{ selected: boolean }>`

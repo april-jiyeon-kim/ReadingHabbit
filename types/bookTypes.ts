@@ -23,7 +23,7 @@ export interface Book {
   pageCount?: number;
   uid: string;
   tags?: string[];
-  goal?: Goal;
+  goalId?: string;
 }
 
 export enum ReadingStatus {

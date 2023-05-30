@@ -5,17 +5,13 @@ import styled from "styled-components/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Book, Note, NoteType, PageRange } from "../types/bookTypes";
+import { Book, Note, NoteType, PageRange, PageType } from "../types/bookTypes";
 import { firebase } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
-import BottomSheet, {
-  BottomSheetModal,
-  BottomSheetModalProvider,
-  BottomSheetBackdrop,
-  BottomSheetTextInput,
-} from "@gorhom/bottom-sheet";
+
 import SetPage from "../components/screens/WriteNote/SetPage";
 import ToggleTab from "../components/common/ToggleTab";
+import InputModal from "../components/common/InputModal";
 
 type RootStackParamList = {
   WriteNote: { book: Book };
@@ -32,26 +28,21 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
   const [note, setNote] = useState("");
   const [page, setPage] = useState<PageRange>({ from: 120, to: 123 });
   const [tab, setTab] = useState(NoteType.QUOTES);
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ["25%", "30%", "45%"], []);
-
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const handleSheetChanges = useCallback((index: number) => {
     console.log("handleSheetChanges", index);
   }, []);
 
-  const renderBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop
-        {...props}
-        pressBehavior="close"
-        disappearsOnIndex={1}
-        appearsOnIndex={2}
-      />
-    ),
-    []
-  );
   const handleTabChange = (newTab: NoteType) => {
     setTab(newTab);
+  };
+
+  const openModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
   };
 
   const onChangeText = (text: string) => setNote(text);
@@ -76,10 +67,10 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
     }
   };
 
-  const handlePresentModalPress = () => {
-    console.log("expand");
-    bottomSheetRef.current?.expand();
+  const goToPage = () => {
+    openModal();
   };
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: book.title,
@@ -91,42 +82,38 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
       ),
     });
   }, [navigation, note]);
-
+  const handleSubmit = (pageType: PageType, pageRange: PageRange) => {
+    console.log("Submitted pageType:", pageType);
+    console.log("Submitted value:", pageRange);
+    pageType === PageType.RANGE
+      ? setPage(pageRange)
+      : setPage({ from: pageRange.from });
+  };
   return (
-    <BottomSheetModalProvider>
-      <Wrapper>
-        <ButtonContainer>
-          <ToggleTab
-            activeTab={tab}
-            onChangeTab={handleTabChange}
-            size="small"
-          />
-          <PageBtn onPress={handlePresentModalPress}>
-            <PageText>
-              {page.from && `p. ${page.from}`}
-              {page.to && ` ~ p. ${page.to}`}
-            </PageText>
-          </PageBtn>
-        </ButtonContainer>
-        <TextArea
-          placeholder="Share your thoughts here..."
-          placeholderTextColor={LIGHT_GREY}
-          multiline
-          textAlignVertical="top"
-          value={note}
-          onChangeText={onChangeText}
-        />
-        <BottomSheet
-          ref={bottomSheetRef}
-          index={-1}
-          snapPoints={snapPoints}
-          backdropComponent={renderBackdrop}
-          onChange={handleSheetChanges}
-        >
-          <SetPage />
-        </BottomSheet>
-      </Wrapper>
-    </BottomSheetModalProvider>
+    <Wrapper>
+      <ButtonContainer>
+        <ToggleTab activeTab={tab} onChangeTab={handleTabChange} size="small" />
+        <PageBtn onPress={goToPage}>
+          <PageText>
+            {page.from && `p. ${page.from}`}
+            {page.to && ` ~ p. ${page.to}`}
+          </PageText>
+        </PageBtn>
+      </ButtonContainer>
+      <SetPage
+        isVisible={isModalVisible}
+        onClose={closeModal}
+        onSubmit={handleSubmit}
+      />
+      <TextArea
+        placeholder="Share your thoughts here..."
+        placeholderTextColor={LIGHT_GREY}
+        multiline
+        textAlignVertical="top"
+        value={note}
+        onChangeText={onChangeText}
+      />
+    </Wrapper>
   );
 };
 export default WriteNote;
@@ -134,33 +121,35 @@ export default WriteNote;
 const Wrapper = styled.View`
   flex: 1;
   background-color: white;
+  padding-top: 14px;
 `;
 
 const TextArea = styled.TextInput`
-  background-color: white;
   padding: 0 24px;
   font-family: "Pretendard";
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
   flex: 1;
+  width: 100%;
 `;
 
 const ButtonContainer = styled.View`
   flex-direction: row;
-  right: 12px;
   align-items: center;
   justify-content: space-between;
+  align-items: center;
   margin: 0 16px;
 `;
 
 const PageBtn = styled.TouchableOpacity`
   border-radius: 20px;
   min-width: 61px;
-  height: 21px;
+  height: 24px;
   padding: 0 10px;
   border: 2px solid #d8d8d8;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
+  justify-content: center;
 `;
 
 const PageText = styled.Text`
