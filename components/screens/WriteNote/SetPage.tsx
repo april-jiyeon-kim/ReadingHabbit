@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  Alert,
 } from "react-native";
 import styled from "styled-components/native";
 import { PageRange, PageType } from "../../../types/bookTypes";
@@ -18,11 +19,19 @@ interface Props {
   isVisible: boolean;
   onClose: () => void;
   onSubmit: (pageType: PageType, value: PageRange) => void;
+  pageRange?: PageRange;
+  currentPageType?: PageType;
 }
 
-const SetPage: React.FC<Props> = ({ isVisible, onClose, onSubmit }) => {
-  const [tab, setTab] = useState(PageType.SINGLE);
-  const [page, setPage] = useState<PageRange>({ from: 0, to: 0 });
+const SetPage: React.FC<Props> = ({
+  isVisible,
+  onClose,
+  onSubmit,
+  pageRange = { from: 0 },
+  currentPageType = PageType.SINGLE,
+}) => {
+  const [tab, setTab] = useState(currentPageType);
+  const [page, setPage] = useState<PageRange>(pageRange);
   const handleTabChange = (newTab: PageType) => {
     setTab(newTab);
   };
@@ -35,6 +44,20 @@ const SetPage: React.FC<Props> = ({ isVisible, onClose, onSubmit }) => {
   };
 
   const handleSubmit = () => {
+    if (!page.from) {
+      Alert.alert("Please enter page ra1nge");
+      return;
+    }
+    if (tab === PageType.RANGE) {
+      if (!page.to) {
+        Alert.alert("Please enter page range");
+        return;
+      }
+      if (page.to < page.from) {
+        Alert.alert("Please enter valid page range");
+        return;
+      }
+    }
     onSubmit(tab, page);
     onClose();
   };

@@ -25,12 +25,9 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
   const { book } = route.params;
   const user = firebase.auth().currentUser;
   const [note, setNote] = useState("");
-  const [page, setPage] = useState<PageRange>({ from: 120, to: 123 });
+  const [page, setPage] = useState<PageRange>({ from: 0 });
   const [tab, setTab] = useState(NoteType.QUOTES);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
 
   const handleTabChange = (newTab: NoteType) => {
     setTab(newTab);
@@ -45,6 +42,7 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
   };
 
   const onChangeText = (text: string) => setNote(text);
+
   const handleSaveNote = async () => {
     if (!user || note === "") return;
     try {
@@ -82,8 +80,6 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
     });
   }, [navigation, note]);
   const handleSubmit = (pageType: PageType, pageRange: PageRange) => {
-    console.log("Submitted pageType:", pageType);
-    console.log("Submitted value:", pageRange);
     pageType === PageType.RANGE
       ? setPage(pageRange)
       : setPage({ from: pageRange.from });
@@ -138,7 +134,7 @@ const ButtonContainer = styled.View`
   align-items: center;
   justify-content: space-between;
   align-items: center;
-  margin: 0 16px;
+  margin: 0 16px 10px;
 `;
 
 const PageBtn = styled.TouchableOpacity`
