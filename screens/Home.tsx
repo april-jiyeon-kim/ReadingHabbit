@@ -85,7 +85,7 @@ const Home = () => {
       <Text>{item.title}</Text>
       <ProgressBar
         value={
-          item.books
+          item?.books && item.books.length > 0
             ? (getFinishedBook(item.books) / item.books.length) * 100
             : 0
         }

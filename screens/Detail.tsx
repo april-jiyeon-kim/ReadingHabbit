@@ -143,17 +143,55 @@ const Detail: React.FC<DetailScreenProps> = ({
   const handleDelete = async () => {
     try {
       const booksCollection = firestore().collection("books");
-      await booksCollection
-        .doc(book.id)
-        .delete()
-        .then(() => {
-          console.log("Book deleted!");
-        });
+      const goalsCollection = firestore().collection("goals");
+      const notesCollection = firestore().collection("notes");
+
+      // Delete the book document from the "books" collection
+      await booksCollection.doc(book.id).delete();
+
+      // Remove the book from the "books" array in the "goals" collection
+      const goalDoc = await goalsCollection.doc(book.goalId).get();
+
+      if (goalDoc.exists) {
+        const goalRef = goalsCollection.doc(book.goalId);
+        const goalData = goalDoc.data();
+
+        if (goalData && goalData.books) {
+          // Remove the book from the "books" array in the goal document
+          const updatedBooks = goalData.books.filter(
+            (bookItem: Book) => bookItem.id !== book.id
+          );
+          // Update the "books" array in the goal document
+          await goalRef.update({ books: updatedBooks });
+
+          console.log("Book removed from goals collection!");
+        } else {
+          console.log("Invalid goal data or books array not found!");
+        }
+      } else {
+        console.log("Goal document not found!");
+      }
+
+      // Delete the associated notes from the "notes" collection
+      const notesQuerySnapshot = await notesCollection
+        .where("bookId", "==", book.id)
+        .get();
+      const batch = firestore().batch();
+
+      notesQuerySnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+
+      // Commit the batch write operation
+      await batch.commit();
+
+      console.log("Book, goals, and notes deleted!");
       navigation.goBack();
     } catch (error) {
-      console.error("Error delete book:", error);
+      console.error("Error deleting book:", error);
     }
   };
+
   const updateGoal = async (goalId: string) => {
     try {
       const batch = firestore().batch();
