@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import { REGISTER_SCREEN } from "../../../constants/screenName";
+import { DETAIL_SCREEN, REGISTER_SCREEN } from "../../../constants/screenName";
+import firestore from "@react-native-firebase/firestore";
 interface Props {
   book: any;
 }
@@ -18,17 +19,40 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const SearchBookCard: React.FC<Props> = ({ book }) => {
   const navigation = useNavigation();
-  const goToDetail = () => {
+
+  const checkIfBookExists = async () => {
+    try {
+      const booksRef = firestore().collection("books");
+      await booksRef
+        .where("isbn", "==", book.isbn)
+        .get()
+        .then((querySnapshot) => {
+          const bookData = querySnapshot.docs;
+          bookData.length === 0 ? goToRegister() : goToDetail(bookData[0].id);
+        });
+    } catch (error) {
+      console.error("Error checking if book exists:", error);
+      return false;
+    }
+  };
+  const goToRegister = () => {
     //@ts-ignore
     navigation.navigate("Stack", {
       screen: REGISTER_SCREEN,
       params: { ...book },
     });
   };
+  const goToDetail = (bookId: string) => {
+    //@ts-ignore
+    navigation.navigate("Stack", {
+      screen: DETAIL_SCREEN,
+      params: { bookId },
+    });
+  };
   return (
     <Wrapper>
       <Card>
-        <TouchableWithoutFeedback onPress={goToDetail}>
+        <TouchableWithoutFeedback onPress={checkIfBookExists}>
           <View>
             <BookCover image={book.image} />
           </View>
