@@ -10,7 +10,7 @@ import {
   ListRenderItem,
   TouchableWithoutFeedback,
 } from "react-native";
-import { View, Text } from "react-native";
+import { View, Text, Dimensions } from "react-native";
 import styled from "styled-components/native";
 import { DARK_BLUE, LIGHT_GREY } from "../styles/colors";
 import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
@@ -28,6 +28,8 @@ import {
 } from "../constants/screenName";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import auth from "@react-native-firebase/auth";
+
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const Bookshelf: React.FC<NativeStackScreenProps<any, "Bookshelf">> = ({
   navigation: { navigate },
@@ -99,6 +101,11 @@ const Bookshelf: React.FC<NativeStackScreenProps<any, "Bookshelf">> = ({
             color="black"
           />
         </SectionTitle>
+        {booksReading.length === 0 && (
+          <NoBookWrapper>
+            <NoBookText>You haven't started reading any books yet.</NoBookText>
+          </NoBookWrapper>
+        )}
         <FlatList
           data={booksReading}
           horizontal
@@ -128,6 +135,11 @@ const Bookshelf: React.FC<NativeStackScreenProps<any, "Bookshelf">> = ({
       </Container>
       <Container>
         <SectionTitle>Finished Books</SectionTitle>
+        {booksRead.length === 0 && (
+          <NoBookWrapper>
+            <NoBookText>You haven't started reading any books yet.</NoBookText>
+          </NoBookWrapper>
+        )}
         <FlatList
           data={booksRead}
           horizontal
@@ -165,4 +177,18 @@ const RegisterBook = styled.TouchableOpacity`
 
 const Seperator = styled.View`
   width: 10px;
+`;
+
+const NoBookWrapper = styled.View`
+  width: ${SCREEN_WIDTH}px;
+  margin: 60px 24px 0;
+`;
+
+const NoBookText = styled.Text`
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  width: 100%;
+  line-height: 17px;
 `;

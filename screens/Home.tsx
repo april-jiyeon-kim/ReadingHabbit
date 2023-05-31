@@ -102,45 +102,58 @@ const Home = () => {
   return (
     <Container>
       <Title>Genre bias</Title>
-      <BiasContainer>
-        <PieWrapper>
-          <VictoryPie
-            colorScale={"qualitative"}
-            data={userTags}
-            innerRadius={100}
-            labelRadius={70}
-            width={200}
-            height={200}
-            labels={({ datum }) =>
-              `${Math.floor((datum.y / totalAmount) * 100)}%`
-            }
-            style={{
-              labels: { fill: "white", fontSize: 14 },
-            }}
-          />
-        </PieWrapper>
-        <LegendWrapper>
-          <VictoryLegend
-            orientation="vertical"
-            colorScale={"qualitative"}
-            data={userTags}
-            x={50}
-          />
-        </LegendWrapper>
-      </BiasContainer>
+      {userTags.length === 0 ? (
+        <NoDataText>You haven't read set any tags yet.</NoDataText>
+      ) : (
+        <BiasContainer>
+          <PieWrapper>
+            <VictoryPie
+              colorScale={"qualitative"}
+              data={userTags}
+              innerRadius={100}
+              labelRadius={70}
+              width={200}
+              height={200}
+              labels={({ datum }) =>
+                `${Math.floor((datum.y / totalAmount) * 100)}%`
+              }
+              style={{
+                labels: { fill: "white", fontSize: 14 },
+              }}
+            />
+          </PieWrapper>
+          <LegendWrapper>
+            <VictoryLegend
+              orientation="vertical"
+              colorScale={"qualitative"}
+              data={userTags}
+              x={50}
+            />
+          </LegendWrapper>
+        </BiasContainer>
+      )}
+
       <GoalsWrapper>
         <TouchableOpacity onPress={goToGoalsScreen}>
           <Title>Goals</Title>
         </TouchableOpacity>
-        <SectionContainer>
-          <FlatList
-            data={goals}
-            renderItem={renderGoals}
-            contentContainerStyle={{ paddingTop: 14, paddingBottom: 52 }}
-            keyExtractor={goalKeyExtractor}
-            ItemSeparatorComponent={Seperator}
-          />
-        </SectionContainer>
+        {goals.length === 0 ? (
+          <NoDataText>
+            You haven't set any goals yet.
+            {"\n"}
+            Try setting a reading goal!
+          </NoDataText>
+        ) : (
+          <SectionContainer>
+            <FlatList
+              data={goals}
+              renderItem={renderGoals}
+              contentContainerStyle={{ paddingTop: 14, paddingBottom: 52 }}
+              keyExtractor={goalKeyExtractor}
+              ItemSeparatorComponent={Seperator}
+            />
+          </SectionContainer>
+        )}
       </GoalsWrapper>
     </Container>
   );
@@ -181,4 +194,8 @@ const GoalWrapper = styled.View`
 
 const Seperator = styled.View`
   height: 10px;
+`;
+
+const NoDataText = styled.Text`
+  margin: 16px;
 `;

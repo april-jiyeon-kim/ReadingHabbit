@@ -19,6 +19,7 @@ import { DARK_BLUE } from "../styles/colors";
 import firestore from "@react-native-firebase/firestore";
 import { firebase } from "@react-native-firebase/auth";
 import { HOME_SCREEN } from "../constants/screenName";
+import { BOOKSHELF_SCREEN } from "../constants/screenName";
 
 type RootStackParamList = {
   Register: Book;
@@ -65,7 +66,12 @@ const Register: React.FC<RegisterScreenProps> = ({
   const handleStatusChange = useCallback((status: ReadingStatus) => {
     setReadingStatus(status);
   }, []);
-
+  const goToHome = () => {
+    //@ts-ignore
+    navigation.navigate("Tabs", {
+      screen: BOOKSHELF_SCREEN,
+    });
+  };
   const registerBook = useCallback(async () => {
     if (!user) return;
     try {
@@ -80,6 +86,7 @@ const Register: React.FC<RegisterScreenProps> = ({
       const booksCollection = firestore().collection("books");
       await booksCollection.add(bookData).then(() => {
         console.log("Book added!");
+        goToHome();
       });
     } catch (error) {
       console.error("Error registering book:", error);
