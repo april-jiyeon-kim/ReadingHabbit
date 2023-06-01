@@ -45,7 +45,7 @@ const SetPage: React.FC<Props> = ({
 
   const handleSubmit = () => {
     if (!page.from) {
-      Alert.alert("Please enter page ra1nge");
+      Alert.alert("Please enter page range");
       return;
     }
     if (tab === PageType.RANGE) {
