@@ -136,6 +136,7 @@ const EditTags: React.FC<EditTagsScreenProps> = ({ navigation, route }) => {
       <TagsWrapper>
         {tagList.map((it) => (
           <Tag
+            key={it}
             label={it}
             selected={selectedTags.includes(it)}
             editable

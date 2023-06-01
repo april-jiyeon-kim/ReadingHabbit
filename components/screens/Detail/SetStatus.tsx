@@ -31,6 +31,7 @@ const SetStatus: React.FC<Props> = ({ status, onSave }) => {
       <StatusWrapper>
         {Object.values(ReadingStatus).map((status) => (
           <RadioButton
+            key={status}
             label={translateReadingStatus(status)}
             selected={readingStatus === status}
             onPress={() => handleStatusChange(status)}

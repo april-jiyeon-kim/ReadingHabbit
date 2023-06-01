@@ -31,7 +31,7 @@ import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { getActionFromState, useFocusEffect } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
-import { LIGHT_GREY } from "../styles/colors";
+import { DARK_GREY, LIGHT_GREY } from "../styles/colors";
 import { EDIT_TAGS_SCREEN, WRITE_NOTE_SCREEN } from "../constants/screenName";
 import Tag from "../components/common/Tag";
 import { useFirestoreConnect } from "react-redux-firebase";
@@ -295,6 +295,7 @@ const Detail: React.FC<DetailScreenProps> = ({
                 >
                   {goals.map((it) => (
                     <Picker.Item
+                      key={it.id}
                       label={it.title}
                       value={it.id}
                       style={{ fontSize: 12 }}
@@ -312,9 +313,10 @@ const Detail: React.FC<DetailScreenProps> = ({
             </BookInfo>
           </BookInfoContainer>
           <TagsWrapper>
-            {book.tags && book.tags.map((it) => <Tag label={it} selected />)}
+            {book.tags &&
+              book.tags.map((it) => <Tag key={it} label={it} selected />)}
             <TagsBtn onPress={goToEditTags}>
-              <AntDesign name="tagso" size={24} color="#797979" />
+              <AntDesign name="tagso" size={24} color={DARK_GREY} />
               <TagsText>{book.tags ? "Edit tags" : "Add tags"}</TagsText>
             </TagsBtn>
           </TagsWrapper>
@@ -379,7 +381,7 @@ const BottomText = styled.Text`
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
-  color: #797979;
+  color: ${DARK_GREY};
 `;
 
 const BookContainer = styled.View`
@@ -405,7 +407,7 @@ const TagsBtn = styled.TouchableOpacity`
 `;
 const TagsText = styled.Text`
   padding-left: 4px;
-  color: "#797979";
+  color: ${DARK_GREY};
 `;
 
 const TagsWrapper = styled(Row)`
@@ -431,8 +433,8 @@ const GoalText = styled.Text`
   font-style: normal;
   font-weight: 400;
   font-size: 10px;
-  color: #797979;
   margin-right: 7px;
+  color: ${DARK_GREY};
 `;
 
 const CustomToggleTab = styled(ToggleTab)`
