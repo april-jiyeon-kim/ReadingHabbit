@@ -19,7 +19,7 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
   const onLogin = async () => {
     try {
       await auth().signInWithEmailAndPassword(email, password);
-    } catch (e: any) {
+    } catch (e) {
       console.log(e);
     }
   };

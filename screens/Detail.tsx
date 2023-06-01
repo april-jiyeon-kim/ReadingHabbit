@@ -20,6 +20,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import BottomSheet, {
   BottomSheetModalProvider,
   BottomSheetBackdrop,
+  BottomSheetBackdropProps,
 } from "@gorhom/bottom-sheet";
 import { Ionicons } from "@expo/vector-icons";
 import SetStatus from "../components/screens/Detail/SetStatus";
@@ -122,7 +123,7 @@ const Detail: React.FC<DetailScreenProps> = ({
   };
 
   const renderBackdrop = useCallback(
-    (props: any) => (
+    (props: BottomSheetBackdropProps) => (
       <BottomSheetBackdrop
         {...props}
         pressBehavior="close"

@@ -32,13 +32,8 @@ const Join = () => {
         .then((result) => {
           result.user.updateProfile({ displayName: name });
         });
-    } catch (e: any) {
+    } catch (e) {
       console.log(e);
-      switch (e.code) {
-        case "auth/weak-password": {
-          Alert.alert("Write a stronger password!");
-        }
-      }
     }
   };
   return (

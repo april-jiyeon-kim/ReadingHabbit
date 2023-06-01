@@ -31,7 +31,16 @@ import auth from "@react-native-firebase/auth";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-const Bookshelf: React.FC<NativeStackScreenProps<any, "Bookshelf">> = ({
+type RootStackParamList = {
+  Bookshelf: undefined;
+};
+
+type BookshelfScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  "Bookshelf"
+>;
+
+const Bookshelf: React.FC<BookshelfScreenProps> = ({
   navigation: { navigate },
 }) => {
   const [loading, setLoading] = useState(true);
@@ -118,7 +127,10 @@ const Bookshelf: React.FC<NativeStackScreenProps<any, "Bookshelf">> = ({
         <SectionTitle>Wish List</SectionTitle>
         <Row>
           <RegisterBook
-            onPress={() => navigate("Stack", { screen: SEARCH_SCREEN })}
+            onPress={() =>
+              //@ts-ignore
+              navigation.navigate("Stack", { screen: SEARCH_SCREEN })
+            }
           >
             <AntDesign name="plus" size={24} color={DARK_BLUE} />
           </RegisterBook>

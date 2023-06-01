@@ -28,9 +28,13 @@ export function getFinishedBook(books: Book[]) {
     .length;
 }
 
-const Goals: React.FC<NativeStackScreenProps<any, "Goal">> = ({
-  navigation: { navigate },
-}) => {
+type RootStackParamList = {
+  Goals: undefined;
+};
+
+type GoalsScreenProps = NativeStackScreenProps<RootStackParamList, "Goals">;
+
+const Goals: React.FC<GoalsScreenProps> = ({ navigation: { navigate } }) => {
   const user = firebase.auth().currentUser;
   const [loading, setLoading] = useState(true);
   const [goals, setGoals] = useState<Goal[]>([]);

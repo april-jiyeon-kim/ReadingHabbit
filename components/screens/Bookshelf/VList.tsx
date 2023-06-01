@@ -3,9 +3,10 @@ import { FlatList } from "react-native";
 import BookCover from "./BookCover";
 import SearchBookCard from "./SearchBookCard";
 import styled from "styled-components/native";
+import { Book } from "../../../types/bookTypes";
 
 interface VListProps {
-  data: any[];
+  data: Book[];
 }
 
 const VList: React.FC<VListProps> = ({ data }) => {

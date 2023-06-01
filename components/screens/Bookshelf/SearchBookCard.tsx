@@ -11,8 +11,9 @@ import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { DETAIL_SCREEN, REGISTER_SCREEN } from "../../../constants/screenName";
 import firestore from "@react-native-firebase/firestore";
+import { Book } from "../../../types/bookTypes";
 interface Props {
-  book: any;
+  book: Book;
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
