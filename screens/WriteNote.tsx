@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { View, Text, TextInput } from "react-native";
 import {
   DARK_BLUE,
@@ -29,30 +35,26 @@ type WriteNoteScreenProps = NativeStackScreenProps<
 const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
   const { book } = route.params;
   const user = firebase.auth().currentUser;
-  const [note, setNote] = useState("");
+  const [noteText, setNoteText] = useState<string>("");
   const [page, setPage] = useState<PageRange>({ from: 0 });
-  const [tab, setTab] = useState(NoteType.QUOTES);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const noteInput = useRef<TextInput>(null);
+  const [tab, setTab] = useState(NoteType.QUOTES);
+
+  const onChangeText = useCallback((text: string) => {
+    setNoteText(text);
+  }, []);
 
   const handleTabChange = (newTab: NoteType) => {
     setTab(newTab);
   };
 
-  const openModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const closeModal = () => {
-    setIsModalVisible(false);
-  };
-
-  const onChangeText = (text: string) => setNote(text);
-
   const handleSaveNote = async () => {
-    if (!user || note === "") return;
+    if (!user || noteText === "") return;
+    console.log("page:", page);
     try {
       const noteData = {
-        text: note,
+        text: noteText,
         bookId: book.id,
         noteType: tab,
         uid: user.uid,
@@ -69,9 +71,21 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
     }
   };
 
+  const openModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
+
   const goToPage = () => {
     openModal();
   };
+
+  useEffect(() => {
+    noteInput.current?.focus();
+  }, []);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -83,12 +97,14 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
         </TouchableOpacity>
       ),
     });
-  }, [navigation, note]);
+  }, [navigation, handleSaveNote]);
+
   const handleSubmit = (pageType: PageType, pageRange: PageRange) => {
     pageType === PageType.RANGE
       ? setPage(pageRange)
       : setPage({ from: pageRange.from });
   };
+
   return (
     <Wrapper>
       <ButtonContainer>
@@ -104,18 +120,22 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
         isVisible={isModalVisible}
         onClose={closeModal}
         onSubmit={handleSubmit}
+        pageRange={page}
+        currentPageType={page.to ? PageType.RANGE : PageType.SINGLE}
       />
       <TextArea
+        ref={noteInput}
         placeholder="Share your thoughts here..."
         placeholderTextColor={LIGHT_GREY}
         multiline
         textAlignVertical="top"
-        value={note}
+        value={noteText}
         onChangeText={onChangeText}
       />
     </Wrapper>
   );
 };
+
 export default WriteNote;
 
 const Wrapper = styled.View`

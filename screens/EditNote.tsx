@@ -19,12 +19,6 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Book, Note, NoteType, PageRange, PageType } from "../types/bookTypes";
 import { firebase } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
-import BottomSheet, {
-  BottomSheetModal,
-  BottomSheetModalProvider,
-  BottomSheetBackdrop,
-  BottomSheetTextInput,
-} from "@gorhom/bottom-sheet";
 import SetPage from "../components/screens/WriteNote/SetPage";
 import ToggleTab from "../components/common/ToggleTab";
 
@@ -99,13 +93,14 @@ const EditNote: React.FC<EditNoteScreenProps> = ({ navigation, route }) => {
     setIsModalVisible(false);
   };
 
+  const goToPage = () => {
+    openModal();
+  };
+
   useEffect(() => {
     noteInput.current?.focus();
   }, []);
 
-  const goToPage = () => {
-    openModal();
-  };
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "Edit Note",
@@ -122,6 +117,7 @@ const EditNote: React.FC<EditNoteScreenProps> = ({ navigation, route }) => {
       ),
     });
   }, [navigation, handleSaveNote]);
+
   const handleSubmit = (pageType: PageType, pageRange: PageRange) => {
     pageType === PageType.RANGE
       ? setPage(pageRange)
