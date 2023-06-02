@@ -12,7 +12,7 @@ import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { GOALS_SCREEN } from "../constants/screenName";
 import { useNavigation } from "@react-navigation/native";
-import { Goal } from "../types/bookTypes";
+import { Book, Goal } from "../types/bookTypes";
 import { getFinishedBook } from "./Goals";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
@@ -65,6 +65,7 @@ const Home = () => {
             ...doc.data(),
           })) as Goal[];
           setGoals(goalsArray);
+          fetchBooksData(goalsArray);
         });
 
       return () => {
@@ -73,6 +74,39 @@ const Home = () => {
       };
     }, [])
   );
+
+  const fetchBooksData = async (goalsData: Goal[]) => {
+    console.log("fetch books data");
+    const goalIds = goalsData.map((goal) => goal.id);
+    const booksQuerySnapshot = await firestore()
+      .collection("books")
+      .where("goalId", "in", goalIds)
+      .get();
+
+    const booksData: Record<string, Book[]> = {};
+
+    booksQuerySnapshot.forEach((bookDoc) => {
+      const bookData = {
+        id: bookDoc.id,
+        ...bookDoc.data(),
+      } as Book;
+
+      const goalId = bookData.goalId;
+      if (!goalId) return;
+      if (!booksData[goalId]) {
+        booksData[goalId] = [];
+      }
+
+      booksData[goalId].push(bookData);
+    });
+
+    const updatedGoals = goalsData.map((goal) => ({
+      ...goal,
+      books: booksData[goal.id] || [],
+    }));
+
+    setGoals(updatedGoals);
+  };
   const goToGoalsScreen = () => {
     //@ts-ignore
     navigation.navigate("Stack", {

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components/native";
 import { Container, Row } from "../styles/layout";
 import { HeaderText } from "../styles/text";
@@ -55,12 +55,46 @@ const Goals: React.FC<GoalsScreenProps> = ({ navigation: { navigate } }) => {
           })) as Goal[];
           setGoals(goalsArray);
           setLoading(false);
+
+          fetchBooksData(goalsArray);
         });
 
       return () => unsubscribe();
     }, [])
   );
 
+  const fetchBooksData = async (goalsData: Goal[]) => {
+    console.log("fetch books data");
+    const goalIds = goalsData.map((goal) => goal.id);
+    const booksQuerySnapshot = await firestore()
+      .collection("books")
+      .where("goalId", "in", goalIds)
+      .get();
+
+    const booksData: Record<string, Book[]> = {};
+
+    booksQuerySnapshot.forEach((bookDoc) => {
+      const bookData = {
+        id: bookDoc.id,
+        ...bookDoc.data(),
+      } as Book;
+
+      const goalId = bookData.goalId;
+      if (!goalId) return;
+      if (!booksData[goalId]) {
+        booksData[goalId] = [];
+      }
+
+      booksData[goalId].push(bookData);
+    });
+
+    const updatedGoals = goalsData.map((goal) => ({
+      ...goal,
+      books: booksData[goal.id] || [],
+    }));
+
+    setGoals(updatedGoals);
+  };
   const handleAddGoal = useCallback(async () => {
     if (!user) return;
     try {

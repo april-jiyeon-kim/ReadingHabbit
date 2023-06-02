@@ -53,6 +53,7 @@ const Detail: React.FC<DetailScreenProps> = ({
 }) => {
   const { bookId } = params;
   const [tab, setTab] = useState(NoteType.QUOTES);
+  const [selectedItem, setSelectedItem] = useState<string>("");
   useFirestoreConnect([
     { collection: "books", doc: bookId },
     {
@@ -93,6 +94,18 @@ const Detail: React.FC<DetailScreenProps> = ({
       setCurrentPage(book.reading?.currentPage || 0);
     }
   }, [book]);
+
+  useEffect(() => {
+    if (
+      goals &&
+      book?.goalId &&
+      goals.find((it) => it.id === book.goalId)?.id
+    ) {
+      const selectedGoal = goals.find((it) => it.id === book.goalId)?.id || "";
+      setSelectedItem(selectedGoal);
+      console.log(selectedGoal);
+    }
+  }, []);
 
   const [selectedBottomSheet, setSelectedBottomSheet] =
     useState<BottomSheetType>("Status");
@@ -194,6 +207,7 @@ const Detail: React.FC<DetailScreenProps> = ({
   };
 
   const updateGoal = async (goalId: string) => {
+    if (!goalId) return;
     try {
       const batch = firestore().batch();
 
@@ -209,6 +223,8 @@ const Detail: React.FC<DetailScreenProps> = ({
       });
 
       await batch.commit();
+      setSelectedItem(goalId);
+      console.log("Goal updated");
     } catch (error) {
       console.error("Error updating goal:", error);
     }
@@ -280,19 +296,18 @@ const Detail: React.FC<DetailScreenProps> = ({
               <GoalWrapper>
                 <GoalText>GOAL</GoalText>
                 <Picker
-                  selectedValue={goals.find((it) => it.id === book.goalId)?.id}
+                  selectedValue={selectedItem}
                   onValueChange={updateGoal}
                   style={{
                     width: 180,
                     height: 22,
                     backgroundColor: INPUT_BG_COLOR,
+                    borderRadius: 20,
                     shadowColor: "black",
                     shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.05,
-                    shadowRadius: 4,
-                    borderRadius: 6,
                   }}
                 >
+                  <Picker.Item label="Select a value..." value="" />
                   {goals.map((it) => (
                     <Picker.Item
                       key={it.id}
@@ -440,3 +455,5 @@ const GoalText = styled.Text`
 const CustomToggleTab = styled(ToggleTab)`
   margin: 10px 0 17px 0;
 `;
+
+const SelectWrapper = styled(View)``;
