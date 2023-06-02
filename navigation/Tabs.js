@@ -51,7 +51,7 @@ const Tabs = () => {
         options={{
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
-              name="note-edit-outline"
+              name="note-outline"
               size={24}
               color={color}
             />
