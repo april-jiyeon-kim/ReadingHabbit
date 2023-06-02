@@ -39,7 +39,7 @@ const Wrapper = styled(Row)`
   height: 46px;
   width: 100%;
   border-radius: 20px;
-  background-color: INPUT_BG_COLOR;
+  background-color: ${INPUT_BG_COLOR};
   padding: 2px;
   margin: 10px 0 17px 0;
 `;
