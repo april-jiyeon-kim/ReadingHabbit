@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Row } from "../../../styles/layout";
 import RadioButton from "../../common/RadioButton";
 import { translateReadingStatus } from "../../../utils";
+import { DARK_BLUE, DARK_GREY } from "../../../styles/colors";
 
 interface Props {
   status: ReadingStatus;
@@ -59,13 +60,13 @@ const Title = styled.Text`
   font-style: normal;
   font-weight: 400;
   font-size: 24px;
-  color: #797979;
+  color: ${DARK_GREY};
 `;
 
 const SaveBtn = styled.TouchableOpacity`
   width: 100%;
   height: 37px;
-  background: #1e90ff;
+  background: ${DARK_BLUE};
   border-radius: 10px;
   align-items: center;
   justify-content: center;

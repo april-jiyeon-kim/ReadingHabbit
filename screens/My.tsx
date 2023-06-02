@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import auth from "@react-native-firebase/auth";
 import styled from "styled-components/native";
 import { SubHeaderText } from "../styles/text";
+import { LIGHT_BEIGE, LIGHT_GREY } from "../styles/colors";
 interface Props {
   navigation: {
     navigate: (screen: string) => void;
@@ -45,7 +46,7 @@ const NameText = styled.Text`
 
 const MenuItem = styled.TouchableOpacity`
   border-bottom-width: 1px;
-  border-bottom-color: #e8e8e8;
+  border-bottom-color: ${LIGHT_BEIGE};
   padding: 14px 0;
   width: 100%;
   justify-content: center;

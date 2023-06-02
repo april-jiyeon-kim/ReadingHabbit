@@ -4,6 +4,7 @@ import { Row } from "../../../styles/layout";
 import { Note } from "../../../types/bookTypes";
 import { EDIT_NOTE_SCREEN } from "../../../constants/screenName";
 import { useNavigation } from "@react-navigation/native";
+import { INPUT_BORDER_COLOR, PLACEHOLDER_COLOR } from "../../../styles/colors";
 
 interface Props {
   note: Note;
@@ -44,7 +45,7 @@ const RightContainer = styled.TouchableOpacity`
   flex: 1;
   width: 100%;
   border-bottom-width: 1px;
-  border-bottom-color: #e8e8e8;
+  border-bottom-color: ${INPUT_BORDER_COLOR};
   align-items: flex-start;
   margin-left: 16px;
   padding-bottom: 16px;
@@ -56,7 +57,7 @@ const PageText = styled.Text`
   font-size: 14px;
   line-height: 17px;
   text-align: right;
-  color: #bdbdbd;
+  color: ${PLACEHOLDER_COLOR};
 `;
 const NoteTitle = styled.Text`
   font-family: "Pretendard";

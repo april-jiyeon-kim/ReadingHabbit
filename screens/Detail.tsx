@@ -31,7 +31,7 @@ import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { getActionFromState, useFocusEffect } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
-import { DARK_GREY, LIGHT_GREY } from "../styles/colors";
+import { DARK_GREY, INPUT_BG_COLOR, LIGHT_GREY } from "../styles/colors";
 import { EDIT_TAGS_SCREEN, WRITE_NOTE_SCREEN } from "../constants/screenName";
 import Tag from "../components/common/Tag";
 import { useFirestoreConnect } from "react-redux-firebase";
@@ -285,8 +285,8 @@ const Detail: React.FC<DetailScreenProps> = ({
                   style={{
                     width: 180,
                     height: 22,
-                    backgroundColor: "#FCFDFE",
-                    shadowColor: "#000",
+                    backgroundColor: INPUT_BG_COLOR,
+                    shadowColor: "black",
                     shadowOffset: { width: 0, height: 4 },
                     shadowOpacity: 0.05,
                     shadowRadius: 4,

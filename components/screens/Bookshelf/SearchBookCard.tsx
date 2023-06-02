@@ -12,6 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { DETAIL_SCREEN, REGISTER_SCREEN } from "../../../constants/screenName";
 import firestore from "@react-native-firebase/firestore";
 import { Book } from "../../../types/bookTypes";
+import { DARK_GREY, LIGHT_GREY } from "../../../styles/colors";
 interface Props {
   book: Book;
 }
@@ -91,7 +92,7 @@ const Wrapper = styled.View`
 
 const Card = styled.View`
   width: 90%;
-  border: 1px solid #d9d9d9;
+  border: 1px solid ${LIGHT_GREY};
   border-radius: 10px;
   padding: 8px 11px;
   flex-direction: row;
@@ -107,5 +108,5 @@ const BottomText = styled.Text`
   font-style: normal;
   font-weight: 400;
   font-size: 10px;
-  color: #797979;
+  color: ${DARK_GREY};
 `;

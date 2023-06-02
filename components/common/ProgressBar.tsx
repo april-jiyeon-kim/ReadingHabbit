@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import styled from "styled-components/native";
-import { LIGHT_GREY, MEDIUM_BLUE } from "../../styles/colors";
+import { DARK_GREY, LIGHT_GREY, MEDIUM_BLUE } from "../../styles/colors";
 
 interface ProgressBarProps {
   value: number;
@@ -39,7 +39,7 @@ export default ProgressBar;
 
 const Container = styled.View`
   width: 100%;
-  background-color: #d9d9d9;
+  background-color: ${LIGHT_GREY};
   border-radius: 20px;
   position: relative;
   margin-top: 8px;
@@ -72,5 +72,5 @@ const CustomLabel = styled.Text`
   font-size: 12px;
   line-height: 14px;
 
-  color: #797979;
+  color: ${DARK_GREY};
 `;

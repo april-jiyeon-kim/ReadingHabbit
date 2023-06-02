@@ -6,7 +6,12 @@ import React, {
   useState,
 } from "react";
 import { View, Text, TextInput, Alert } from "react-native";
-import { DARK_BLUE, LIGHT_GREY } from "../styles/colors";
+import {
+  DARK_BLUE,
+  DARK_GREY,
+  LIGHT_BEIGE,
+  LIGHT_GREY,
+} from "../styles/colors";
 import styled from "styled-components/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
@@ -185,7 +190,7 @@ const PageBtn = styled.TouchableOpacity`
   min-width: 61px;
   height: 24px;
   padding: 0 10px;
-  border: 2px solid #d8d8d8;
+  border: 2px solid ${LIGHT_BEIGE};
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
   justify-content: center;
 `;
@@ -197,5 +202,5 @@ const PageText = styled.Text`
   font-size: 12px;
   line-height: 15px;
   text-align: center;
-  color: #797979;
+  color: ${DARK_GREY};
 `;

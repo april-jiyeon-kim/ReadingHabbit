@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Switch } from "react-native";
 import styled from "styled-components/native";
 import { PageType } from "../../../types/bookTypes";
 import { Row } from "../../../styles/layout";
-import { DARK_BLUE, LIGHT_GREY } from "../../../styles/colors";
+import { DARK_BLUE, INPUT_BG_COLOR, LIGHT_GREY } from "../../../styles/colors";
 
 interface ToggleTabProps {
   activeTab: PageType;
@@ -39,7 +39,7 @@ const Wrapper = styled(Row)`
   height: 46px;
   width: 100%;
   border-radius: 20px;
-  background-color: #f6f6f6;
+  background-color: INPUT_BG_COLOR;
   padding: 2px;
   margin: 10px 0 17px 0;
 `;
@@ -48,7 +48,7 @@ const Tab = styled.TouchableOpacity<{ selected: boolean }>`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${({ selected }) => (selected ? "white" : "#F6F6F6")};
+  background-color: ${({ selected }) => (selected ? "white" : INPUT_BG_COLOR)};
   height: 100%;
   border-radius: 20px;
 `;

@@ -2,7 +2,12 @@ import React, { useRef, useState } from "react";
 import { View, Text, TextInput, Alert, ActivityIndicator } from "react-native";
 import styled from "styled-components/native";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import { DARK_BLUE } from "../styles/colors";
+import {
+  DARK_BLUE,
+  INPUT_BG_COLOR,
+  INPUT_BORDER_COLOR,
+  PLACEHOLDER_COLOR,
+} from "../styles/colors";
 
 const Join = () => {
   const emailInput = useRef<TextInput>(null);
@@ -47,7 +52,7 @@ const Join = () => {
           returnKeyLabel="next"
           onChangeText={(text) => setName(text)}
           onSubmitEditing={onSubmitNameEditing}
-          placeholderTextColor={"#BDBDBD"}
+          placeholderTextColor={PLACEHOLDER_COLOR}
         />
         <PreLoginTextInput
           ref={emailInput}
@@ -59,7 +64,7 @@ const Join = () => {
           returnKeyLabel="next"
           onChangeText={(text) => setEmail(text)}
           onSubmitEditing={onSubmitEmailEditing}
-          placeholderTextColor={"#BDBDBD"}
+          placeholderTextColor={PLACEHOLDER_COLOR}
         />
         <PreLoginTextInput
           ref={passwordInput}
@@ -69,7 +74,7 @@ const Join = () => {
           returnKeyLabel="done"
           onChangeText={(text) => setPassword(text)}
           onSubmitEditing={onSubmitPasswordEditing}
-          placeholderTextColor={"#BDBDBD"}
+          placeholderTextColor={PLACEHOLDER_COLOR}
         />
       </InputWrapper>
       <Btn onPress={onSubmitPasswordEditing}>
@@ -96,13 +101,13 @@ const PreLoginTextInput = styled.TextInput`
   border-radius: 8px;
   margin-bottom: 10px;
   font-size: 16px;
-  background: #f6f6f6;
-  border: 1px solid #e8e8e8;
+  background: ${INPUT_BG_COLOR};
+  border: 1px solid ${INPUT_BORDER_COLOR};
   border-radius: 8px;
 `;
 const Btn = styled.TouchableOpacity`
   padding: 10px 20px;
-  background: #1e90ff;
+  background: ${DARK_BLUE};
   border-radius: 100px;
   justify-content: center;
   align-items: center;

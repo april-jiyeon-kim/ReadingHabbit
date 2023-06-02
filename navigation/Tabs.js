@@ -11,6 +11,7 @@ import {
   MY_SCREEN,
   NOTES_SCREEN,
 } from "../constants/screenName";
+import { DARK_BLUE, DARK_PLUM, LIGHT_GREY } from "../styles/colors";
 
 const Tab = createBottomTabNavigator();
 
@@ -19,10 +20,10 @@ const Tabs = () => {
     <Tab.Navigator
       sceneContainerStyle={{ backgroundColor: "white" }}
       screenOptions={{
-        tabBarStyle: { backgroundColor: "#D9D9D9" },
+        tabBarStyle: { backgroundColor: LIGHT_GREY },
         tabBarActiveTintColor: "white",
-        tabBarActiveBackgroundColor: "#1E90FF",
-        tabBarInactiveTintColor: "#141B34",
+        tabBarActiveBackgroundColor: DARK_BLUE,
+        tabBarInactiveTintColor: DARK_PLUM,
         tabBarShowLabel: false,
       }}
     >

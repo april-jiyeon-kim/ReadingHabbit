@@ -3,6 +3,7 @@ import { Book } from "../../../types/bookTypes";
 import { Text, View } from "react-native";
 import styled from "styled-components/native";
 import ProgressBar from "../../common/ProgressBar";
+import { DARK_GREY, MEDIUM_BLUE } from "../../../styles/colors";
 
 interface Props {
   book: Book;
@@ -38,12 +39,12 @@ const DateWrapper = styled.View`
 `;
 
 const DateText = styled.Text`
-  color: #87ceeb;
+  color: ${MEDIUM_BLUE};
 `;
 
 const Date = styled.Text`
   margin-left: 4px;
-  color: #797979;
+  color: ${DARK_GREY};
 `;
 
 const ProgressLabel = styled.View`
@@ -55,14 +56,14 @@ const PercentageText = styled.Text`
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
-  color: #87ceeb;
+  color: ${MEDIUM_BLUE};
 `;
 const PagesText = styled.Text`
   font-family: "Pretendard";
   font-style: normal;
   font-weight: 400;
   font-size: 12px;
-  color: #797979;
+  color: ${DARK_GREY};
 `;
 
 const Wrapper = styled.View`

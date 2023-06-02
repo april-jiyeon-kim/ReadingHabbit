@@ -1,4 +1,5 @@
 import styled from "styled-components/native";
+import { DARK_GREY } from "./colors";
 
 export const HeaderText = styled.Text`
   font-family: "Pretendard";
@@ -14,5 +15,5 @@ export const SubHeaderText = styled.Text`
   font-weight: 400;
   font-size: 14px;
   line-height: 17px;
-  color: #797979;
+  color: ${DARK_GREY};
 `;
