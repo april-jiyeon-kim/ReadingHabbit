@@ -13,6 +13,7 @@ import { DETAIL_SCREEN, REGISTER_SCREEN } from "../../../constants/screenName";
 import firestore from "@react-native-firebase/firestore";
 import { Book } from "../../../types/bookTypes";
 import { DARK_GREY, LIGHT_GREY } from "../../../styles/colors";
+import auth from "@react-native-firebase/auth";
 interface Props {
   book: Book;
 }
@@ -27,6 +28,7 @@ const SearchBookCard: React.FC<Props> = ({ book }) => {
       const booksRef = firestore().collection("books");
       await booksRef
         .where("isbn", "==", book.isbn)
+        .where("uid", "==", auth().currentUser?.uid)
         .get()
         .then((querySnapshot) => {
           const bookData = querySnapshot.docs;
