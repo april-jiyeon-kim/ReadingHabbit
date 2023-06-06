@@ -20,9 +20,9 @@ const My: React.FC<Props> = ({ navigation }) => {
       <Section>
         <SubHeaderText>User Setting</SubHeaderText>
       </Section>
-      <MenuItem disabled>
+      <DisabledMenu disabled>
         <Text>Language settings</Text>
-      </MenuItem>
+      </DisabledMenu>
       <MenuItem onPress={onLogout}>
         <Text>Logout</Text>
       </MenuItem>
@@ -56,4 +56,8 @@ const Section = styled.View`
   justify-content: flex-start;
   width: 100%;
   margin: 10px 0;
+`;
+
+const DisabledMenu = styled(MenuItem)`
+  opacity: 0.5;
 `;
