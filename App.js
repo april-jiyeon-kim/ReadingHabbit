@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
-import { NavigationContainer } from "@react-navigation/native";
+import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import Tabs from "./navigation/Tabs";
 import { QueryClient, QueryClientProvider } from "react-query";
 import MainNavigator from "./navigation/MainNavigator";
@@ -84,11 +84,19 @@ function App() {
     createFirestoreInstance,
   };
 
+  const navTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: "white",
+    },
+  };
+
   return (
     <ReactReduxFirebaseProvider {...rrfProps}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <QueryClientProvider client={queryClient}>
-          <NavigationContainer>
+          <NavigationContainer theme={navTheme}>
             {isLoggedIn ? <MainNavigator /> : <PreLoginNavigator />}
             <View onLayout={onLayoutRootView}></View>
           </NavigationContainer>

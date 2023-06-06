@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { LIGHT_GREY } from "../styles/colors";
+import {
+  INPUT_BG_COLOR,
+  INPUT_BORDER_COLOR,
+  LIGHT_GREY,
+} from "../styles/colors";
 import { Container } from "../styles/layout";
 import styled from "styled-components/native";
 import { useQuery } from "react-query";
@@ -43,9 +47,10 @@ const Search = () => {
 export default Search;
 
 const SearchBar = styled.TextInput`
-  background-color: white;
+  background-color: ${INPUT_BG_COLOR};
   padding: 10px 15px;
-  border-radius: 15px;
+  border: 1px solid ${INPUT_BORDER_COLOR};
+  border-radius: 30px;
   width: 90%;
   margin: 10px auto;
   margin-bottom: 14px;
