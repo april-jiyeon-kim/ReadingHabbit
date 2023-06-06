@@ -1,8 +1,9 @@
 import React from "react";
+import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Row } from "../../../styles/layout";
 import { Note } from "../../../types/bookTypes";
-import { EDIT_NOTE_SCREEN } from "../../../constants/screenName";
+import { DETAIL_SCREEN, EDIT_NOTE_SCREEN } from "../../../constants/screenName";
 import { useNavigation } from "@react-navigation/native";
 import { INPUT_BORDER_COLOR, PLACEHOLDER_COLOR } from "../../../styles/colors";
 
@@ -21,9 +22,21 @@ const NotesQuotesTab: React.FC<Props> = ({ note, showBookInfo = true }) => {
     });
   };
 
+  const goToDetail = () => {
+    //@ts-ignore
+    navigation.navigate("Stack", {
+      screen: DETAIL_SCREEN,
+      params: { bookId: note.bookId },
+    });
+  };
+
   return (
     <NoteContainer key={note.id}>
-      {showBookInfo && <CoverImg source={{ uri: note.image }} />}
+      {showBookInfo && (
+        <TouchableOpacity onPress={goToDetail}>
+          <CoverImg source={{ uri: note.image }} />
+        </TouchableOpacity>
+      )}
       <RightContainer onPress={goToEditNote}>
         {showBookInfo && <NoteTitle>{note.title}</NoteTitle>}
         <PageText>
