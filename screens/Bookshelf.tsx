@@ -120,6 +120,8 @@ const Bookshelf: React.FC<BookshelfScreenProps> = ({
           horizontal
           keyExtractor={bookKeyExtractor}
           showsHorizontalScrollIndicator={false}
+          ItemSeparatorComponent={Seperator}
+          contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 24 }}
           renderItem={({ item }) => <BookCard key={item.isbn} book={item} />}
         />
       </ReadingContainer>

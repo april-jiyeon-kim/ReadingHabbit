@@ -78,8 +78,7 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
 export default BookCard;
 
 const Container = styled.View`
-  width: ${SCREEN_WIDTH}px;
-  padding: 24px 24px 0 24px;
+  width: ${SCREEN_WIDTH - 48}px;
 `;
 
 const Wrapper = styled.View`
