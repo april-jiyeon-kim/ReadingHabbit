@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { View, Text, TextInput } from "react-native";
+import { View, Text, TextInput, Alert } from "react-native";
 import styled from "styled-components/native";
 import {
   DARK_BLUE,
@@ -8,6 +8,7 @@ import {
   PLACEHOLDER_COLOR,
 } from "../styles/colors";
 import auth from "@react-native-firebase/auth";
+import { FirebaseError } from "firebase/app";
 interface LoginProps {
   navigation: {
     navigate: (screen: string) => void;
@@ -22,10 +23,21 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
     passwordInput.current?.focus();
   };
   const onLogin = async () => {
+    if (!email || !password) {
+      return;
+    }
     try {
       await auth().signInWithEmailAndPassword(email, password);
-    } catch (e) {
+    } catch (e: unknown) {
       console.log(e);
+      if (
+        e instanceof Error ||
+        (typeof FirebaseError !== "undefined" && e instanceof FirebaseError)
+      ) {
+        Alert.alert("Login Failed", e.message);
+      } else {
+        Alert.alert("Login Failed", "An unknown error occurred.");
+      }
     }
   };
 
