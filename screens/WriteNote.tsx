@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { View, Text, TextInput } from "react-native";
+import { View, Text, TextInput, Alert } from "react-native";
 import {
   DARK_BLUE,
   DARK_GREY,
@@ -50,7 +50,10 @@ const WriteNote: React.FC<WriteNoteScreenProps> = ({ navigation, route }) => {
   };
 
   const handleSaveNote = async () => {
-    if (!user || noteText === "") return;
+    if (!user || noteText === "") {
+      Alert.alert("Please enter your notes");
+      return;
+    }
     console.log("page:", page);
     try {
       const noteData = {

@@ -49,7 +49,10 @@ const EditNote: React.FC<EditNoteScreenProps> = ({ navigation, route }) => {
   };
 
   const handleSaveNote = useCallback(async () => {
-    if (!user || noteText === "") return;
+    if (!user || noteText === "") {
+      Alert.alert("Please enter your notes");
+      return;
+    }
     try {
       const notesCollection = firestore().collection("notes");
       await notesCollection.doc(note.id).update({
