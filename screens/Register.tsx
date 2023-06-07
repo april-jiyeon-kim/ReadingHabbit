@@ -137,9 +137,9 @@ const Register: React.FC<RegisterScreenProps> = ({
                   value={item.pageCount.toString()}
                 />
               )}
-              <LinkBtn onPress={openLink}>
+              {/* <LinkBtn onPress={openLink}>
                 <BtnText>Link</BtnText>
-              </LinkBtn>
+              </LinkBtn> */}
             </BookInfoContainer>
           </>
         )}
