@@ -75,6 +75,6 @@ const SaveBtn = styled.TouchableOpacity`
 `;
 
 const StatusWrapper = styled(Row)`
-  justify-content: space-between;
+  justify-content: center;
   margin-top: 20px;
 `;

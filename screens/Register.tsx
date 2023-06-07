@@ -166,7 +166,7 @@ const CoverImg = styled.Image`
 `;
 
 const StatusWrapper = styled(Row)`
-  justify-content: space-between;
+  justify-content: center;
 `;
 const LinkBtn = styled.TouchableOpacity``;
 const BtnText = styled.Text``;
