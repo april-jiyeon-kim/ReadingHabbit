@@ -40,7 +40,13 @@ const Search = () => {
         onSubmitEditing={onSubmit}
       />
       {isLoading ? <Loader /> : null}
-      {data ? <VList data={data.items} /> : null}
+      {data ? (
+        data.items.length > 0 ? (
+          <VList data={data.items} />
+        ) : (
+          <NoBookText>{"The book could not be found"}</NoBookText>
+        )
+      ) : null}
     </Container>
   );
 };
@@ -54,4 +60,8 @@ const SearchBar = styled.TextInput`
   width: 90%;
   margin: 10px auto;
   margin-bottom: 14px;
+`;
+
+const NoBookText = styled.Text`
+  margin: 10px auto;
 `;
